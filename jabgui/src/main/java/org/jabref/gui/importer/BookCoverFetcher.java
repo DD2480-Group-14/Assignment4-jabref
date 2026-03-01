@@ -5,9 +5,12 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.jabref.gui.externalfiletype.CustomExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileType;
@@ -57,9 +60,33 @@ public class BookCoverFetcher {
     private void downloadCoverForISBN(ISBN isbn, Path directory) {
         final String name = "isbn-" + isbn.asString();
         if (findExistingImage(name, directory).isEmpty()) {
+            if (hasFailedAttemptInLast24Hours(name, directory)) {
+                LOGGER.info("Skipped download attempt for {}, attempted less than 24 hours ago", name);
+                return;
+            }
             final String url = getImageUrl(isbn);
             downloadCoverImage(url, name, directory);
         }
+    }
+
+    private boolean hasFailedAttemptInLast24Hours(String name, Path directory) {
+        Optional<Path> notAvailablePathOptional = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
+        if (notAvailablePathOptional.isEmpty()) {
+            LOGGER.warn("Could not find not available file path for: {}", name);
+            return false;
+        }
+        Path notAvailablePath = notAvailablePathOptional.get();
+        if (Files.exists(notAvailablePath)) {
+            try {
+                FileTime lastModifiedTimeStamp = Files.getLastModifiedTime(notAvailablePath);
+                Duration timeSinceLastModification =
+                        Duration.between(lastModifiedTimeStamp.toInstant(), Instant.now());
+                return timeSinceLastModification.toHours() < 24;
+            } catch (IOException e) {
+                LOGGER.warn("Could not read last modified time", e);
+            }
+        }
+        return false;
     }
 
     private void downloadCoverImage(String url, final String name, final Path directory) {
