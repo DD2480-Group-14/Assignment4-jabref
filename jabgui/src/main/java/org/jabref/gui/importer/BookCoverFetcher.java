@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,27 +95,45 @@ public class BookCoverFetcher {
         }
         try {
             download.toFile(destination.get());
+            deleteNotAvailableFileIfExists(name, directory);
         } catch (FetcherClientException | FetcherServerException e) {
             LOGGER.info("Remote book cover does not exist or server returned an error for URL: {}", url);
-            destination = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
-            if (destination.isEmpty()) {
-                return;
-            }
-            if (Files.exists(destination.get())) {
-                try {
-                    Files.setLastModifiedTime(destination.get(), java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis()));
-                } catch (IOException e2) {
-                    LOGGER.error("Could not update last modified time of not available file", e2);
-                }
-            } else {
-                try {
-                    Files.createFile(destination.get());
-                } catch (IOException e2) {
-                    LOGGER.error("Could not create not available file", e2);
-                }
-            }
+            flagAsNotAvailable(name, directory);
         } catch (FetcherException e) {
             LOGGER.error("Error while downloading or saving cover image file", e);
+        }
+    }
+
+    private void flagAsNotAvailable(final String name, final Path directory) {
+        Optional<Path> destination = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
+        if (destination.isEmpty()) {
+            return;
+        }
+        if (Files.exists(destination.get())) {
+            try {
+                FileTime now = FileTime.fromMillis(System.currentTimeMillis());
+                Files.setLastModifiedTime(destination.get(), now);
+            } catch (IOException e) {
+                LOGGER.error("Could not update last modified time of .not-available file", e);
+            }
+        } else {
+            try {
+                Files.createFile(destination.get());
+            } catch (IOException e) {
+                LOGGER.error("Could not create .not-available file", e);
+            }
+        }
+    }
+
+    private void deleteNotAvailableFileIfExists(final String name, final Path directory) {
+        Optional<Path> destination = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
+        if (destination.isEmpty()) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(destination.get());
+        } catch (IOException e) {
+            LOGGER.error("Could not delete .not-available file", e);
         }
     }
 
