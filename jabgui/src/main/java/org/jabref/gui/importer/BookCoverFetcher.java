@@ -9,11 +9,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jabref.gui.externalfiletype.CustomExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.externalfiletype.StandardExternalFileType;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
+import org.jabref.gui.icon.IconTheme;
+import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.FetcherServerException;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.util.Directories;
 import org.jabref.logic.util.io.FileUtil;
@@ -33,6 +37,8 @@ public class BookCoverFetcher {
     private static final String URL_FETCHER_URL = "https://bookcover.longitood.com/bookcover/";
     private static final String IMAGE_FALLBACK_URL = "https://covers.openlibrary.org/b/isbn/";
     private static final String IMAGE_FALLBACK_SUFFIX = "-L.jpg";
+
+    private static final CustomExternalFileType NOT_AVAILABLE_FILE_TYPE = CustomExternalFileType("", "not-available", "", "", "", IconTheme.JabRefIcons.FILE);
 
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
 
@@ -88,8 +94,27 @@ public class BookCoverFetcher {
         }
         try {
             download.toFile(destination.get());
+        } catch (FetcherClientException | FetcherServerException e) {
+            LOGGER.info("Remote book cover does not exist or server returned an error for URL: {}", url);
+            destination = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
+            if (destination.isEmpty()) {
+                return;
+            }
+            if (Files.exists(destination.get())) {
+                try {
+                    Files.setLastModifiedTime(destination.get(), java.nio.file.attribute.FileTime.fromMillis(System.currentTimeMillis()));
+                } catch (IOException e2) {
+                    LOGGER.error("Could not update last modified time of not available file", e2);
+                }
+            } else {
+                try {
+                    Files.createFile(destination.get());
+                } catch (IOException e2) {
+                    LOGGER.error("Could not create not available file", e2);
+                }
+            }
         } catch (FetcherException e) {
-            LOGGER.error("Error while downloading cover image file", e);
+            LOGGER.error("Error while downloading or saving cover image file", e);
         }
     }
 
