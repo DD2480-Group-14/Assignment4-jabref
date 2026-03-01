@@ -96,4 +96,4 @@ Optional (point 7): Is there something special you want to mention here?
 
 ### Essence
 
-We would argue that we are now in the `performing` stage where we work effectively and efficiently, if we had more time we could probably become even more effecient. We can also see that with this assignment we are moving into the `adjourned` stage since this our final assignment.
+We would argue that we are now in the `performing` stage where we work effectively and efficiently, if we had more time we could probably become even more efficient. We can also see that with this assignment we are moving into the `adjourned` stage since this our final assignment.
