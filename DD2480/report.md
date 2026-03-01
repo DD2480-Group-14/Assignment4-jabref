@@ -60,6 +60,8 @@ Optional (point 3): trace tests to requirements.
 
 There doesn't seem to be any tests related to the issue. The file `jabgui/src/main/java/org/jabref/gui/importer/BookCoverFetcher.java`, which is used to fetch book covers, is not covered at all by any tests.
 
+We therefore created some tests that should fail before implementing functionality for the requirements. See `jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java` in the main branch.
+
 ## Code changes
 
 ### Patch
