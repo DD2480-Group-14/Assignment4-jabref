@@ -1,16 +1,12 @@
 # Report for assignment 4
 
-This is a template for your report. You are free to modify it as needed.
-It is not required to use markdown for your report either, but the report
-has to be delivered in a standard, cross-platform format.
-
 ## Project
 
-Name:
+**Name:** JabRef
 
-URL:
+**URL:** https://github.com/JabRef/jabref
 
-One or two sentences describing it
+JabRef is a free open source reference management tool, specifically used for BibTeX and LaTeX format. It helps users collect, organize and search for bibliographic data. 
 
 ## Onboarding experience
 
