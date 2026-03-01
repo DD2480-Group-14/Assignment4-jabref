@@ -18,7 +18,7 @@
 <div class="tab-container">
 <ul class="tabLinks">
 <li>
-<a class="failureGroup" href="#">Gradle Test Run :jabgui:test</a>
+<a class="successGroup" href="#">Gradle Test Run :jabgui:test</a>
 </li>
 </ul>
 <div class="tab">
@@ -28,6 +28,9 @@
 <ul class="tabLinks">
 <li>
 <a class="" href="#">summary</a>
+</li>
+<li>
+<a class="" href="#">error output</a>
 </li>
 </ul>
 <div class="tab">
@@ -48,7 +51,7 @@
 </td>
 <td>
 <div class="infoBox">
-<div class="counter">1</div>
+<div class="counter">0</div>
 <p>failures</p>
 </div>
 </td>
@@ -60,7 +63,7 @@
 </td>
 <td>
 <div class="infoBox duration">
-<div class="counter">0.872s</div>
+<div class="counter">3.179s</div>
 <p>duration</p>
 </div>
 </td>
@@ -69,96 +72,25 @@
 </div>
 </td>
 <td>
-<div class="infoBox failures successRate">
-<div class="percent">0%</div>
+<div class="infoBox success successRate">
+<div class="percent">100%</div>
 <p>successful</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-<div class="result-details">
-<h3>Failure details</h3>
+</div>
+</div>
+<div class="tab">
+<h2>error output</h2>
 <span class="code">
-<pre id="root-0-test-failure-differentiateCaseInUserName()">org.mockito.exceptions.base.MockitoException: 
-Mockito cannot mock this class: class org.jabref.gui.undo.UndoAction.
-
-If you're not sure why you're getting this error, please open an issue on GitHub.
-
-
-Java               : 25
-JVM vendor name    : Amazon.com Inc.
-JVM vendor version : 25.0.1+8-LTS
-JVM name           : OpenJDK 64-Bit Server VM
-JVM version        : 25.0.1+8-LTS
-JVM info           : mixed mode
-OS name            : Mac OS X
-OS version         : 26.3
-
-
-You are seeing this disclaimer because Mockito is configured to create inlined mocks.
-You can learn about inline mocks and their limitations under item #39 of the Mockito class javadoc.
-
-Underlying exception : org.mockito.exceptions.base.MockitoException: Could not modify all classes [interface de.saxsys.mvvmfx.utils.commands.Command, class de.saxsys.mvvmfx.utils.commands.CommandBase, class org.jabref.gui.actions.SimpleCommand, class org.jabref.gui.undo.UndoAction]
-	at org.jabref/org.jabref.gui.entryeditor.CommentsTabTest.setUp(CommentsTabTest.java:92)
-Caused by: org.mockito.exceptions.base.MockitoException: Could not modify all classes [interface de.saxsys.mvvmfx.utils.commands.Command, class de.saxsys.mvvmfx.utils.commands.CommandBase, class org.jabref.gui.actions.SimpleCommand, class org.jabref.gui.undo.UndoAction]
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:172)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:403)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:194)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:414)
-	... 1 more
-Caused by: java.lang.UnsupportedOperationException: class redefinition failed: attempted to delete a method
-	at java.instrument/sun.instrument.InstrumentationImpl.retransformClasses0(Native Method)
-	at java.instrument/sun.instrument.InstrumentationImpl.retransformClasses(InstrumentationImpl.java:221)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:289)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.mockClass(InlineBytecodeGenerator.java:222)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.TypeCachingBytecodeGenerator.lambda$mockClass$0(TypeCachingBytecodeGenerator.java:78)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:172)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:403)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:194)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:414)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.TypeCachingBytecodeGenerator.mockClass(TypeCachingBytecodeGenerator.java:75)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.createMockType(InlineDelegateByteBuddyMockMaker.java:429)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.doCreateMock(InlineDelegateByteBuddyMockMaker.java:388)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.createMock(InlineDelegateByteBuddyMockMaker.java:367)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.createMock(InlineByteBuddyMockMaker.java:56)
-	at org.mockito/org.mockito.internal.util.MockUtil.createMock(MockUtil.java:99)
-	at org.mockito/org.mockito.internal.MockitoCore.mock(MockitoCore.java:84)
-	at org.mockito/org.mockito.Mockito.mock(Mockito.java:2198)
-	at org.mockito/org.mockito.Mockito.mock(Mockito.java:2113)
-	... 1 more
-Cause 1: org.mockito.exceptions.base.MockitoException: Could not modify all classes [interface de.saxsys.mvvmfx.utils.commands.Command, class de.saxsys.mvvmfx.utils.commands.CommandBase, class org.jabref.gui.actions.SimpleCommand, class org.jabref.gui.undo.UndoAction]
-	at app/net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:172)
-	at app/net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:403)
-	at app/net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:194)
-	at app/net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:414)
-	at app/org.jabref/org.jabref.gui.entryeditor.CommentsTabTest.setUp(CommentsTabTest.java:92)
-Caused by: java.lang.UnsupportedOperationException: class redefinition failed: attempted to delete a method
-	at java.instrument/sun.instrument.InstrumentationImpl.retransformClasses0(Native Method)
-	at java.instrument/sun.instrument.InstrumentationImpl.retransformClasses(InstrumentationImpl.java:221)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.triggerRetransformation(InlineBytecodeGenerator.java:289)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineBytecodeGenerator.mockClass(InlineBytecodeGenerator.java:222)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.TypeCachingBytecodeGenerator.lambda$mockClass$0(TypeCachingBytecodeGenerator.java:78)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:172)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:403)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache.findOrInsert(TypeCache.java:194)
-	at net.bytebuddy@1.18.5/net.bytebuddy.TypeCache$WithInlineExpunction.findOrInsert(TypeCache.java:414)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.TypeCachingBytecodeGenerator.mockClass(TypeCachingBytecodeGenerator.java:75)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.createMockType(InlineDelegateByteBuddyMockMaker.java:429)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.doCreateMock(InlineDelegateByteBuddyMockMaker.java:388)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.createMock(InlineDelegateByteBuddyMockMaker.java:367)
-	at org.mockito/org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.createMock(InlineByteBuddyMockMaker.java:56)
-	at org.mockito/org.mockito.internal.util.MockUtil.createMock(MockUtil.java:99)
-	at org.mockito/org.mockito.internal.MockitoCore.mock(MockitoCore.java:84)
-	at org.mockito/org.mockito.Mockito.mock(Mockito.java:2198)
-	at org.mockito/org.mockito.Mockito.mock(Mockito.java:2113)
-	... 1 more
-
+<pre id="root-0-test-stderr-differentiateCaseInUserName()">mars 01, 2026 6:42:17 EM com.sun.javafx.application.PlatformImpl startup
+VARNING: Unsupported JavaFX configuration: classes were loaded from 'module javafx.graphics', isAutomatic: false, isOpen: true
+Messages are not initialized before accessing key: Comments
 </pre>
-<button class="clipboard-copy-btn" aria-label="Copy to clipboard" data-copy-element-id="root-0-test-failure-differentiateCaseInUserName()">Copy</button>
+<button class="clipboard-copy-btn" aria-label="Copy to clipboard" data-copy-element-id="root-0-test-stderr-differentiateCaseInUserName()">Copy</button>
 </span>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -170,7 +102,7 @@ Caused by: java.lang.UnsupportedOperationException: class redefinition failed: a
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="https://www.gradle.org">Gradle 9.5.0-20260203230000+0000</a> at 1 mars 2026 17:41:16</p>
+<a href="https://www.gradle.org">Gradle 9.5.0-20260203230000+0000</a> at 1 mars 2026 18:44:27</p>
 </div>
 </div>
 </body>
