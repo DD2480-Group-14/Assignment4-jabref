@@ -1,0 +1,366 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SearchConfigurationPage</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.gui.externalfiles</a>
+</div>
+
+<h1>Coverage Summary for Class: SearchConfigurationPage (org.jabref.gui.externalfiles)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SearchConfigurationPage</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/121)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.gui.externalfiles;
+&nbsp;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.beans.property.BooleanProperty;
+&nbsp;import javafx.beans.property.SimpleBooleanProperty;
+&nbsp;import javafx.geometry.Insets;
+&nbsp;import javafx.geometry.Pos;
+&nbsp;import javafx.scene.Node;
+&nbsp;import javafx.scene.control.Button;
+&nbsp;import javafx.scene.control.ButtonType;
+&nbsp;import javafx.scene.control.ComboBox;
+&nbsp;import javafx.scene.control.Label;
+&nbsp;import javafx.scene.control.TextField;
+&nbsp;import javafx.scene.layout.ColumnConstraints;
+&nbsp;import javafx.scene.layout.GridPane;
+&nbsp;import javafx.scene.layout.HBox;
+&nbsp;import javafx.scene.layout.Priority;
+&nbsp;import javafx.scene.layout.VBox;
+&nbsp;
+&nbsp;import org.jabref.gui.icon.IconTheme;
+&nbsp;import org.jabref.gui.icon.JabRefIcon;
+&nbsp;import org.jabref.gui.preferences.GuiPreferences;
+&nbsp;import org.jabref.gui.util.IconValidationDecorator;
+&nbsp;import org.jabref.gui.util.ViewModelListCellFactory;
+&nbsp;import org.jabref.logic.externalfiles.DateRange;
+&nbsp;import org.jabref.logic.externalfiles.ExternalFileSorter;
+&nbsp;import org.jabref.logic.l10n.Localization;
+&nbsp;import org.jabref.logic.util.StandardFileType;
+&nbsp;import org.jabref.model.database.BibDatabaseContext;
+&nbsp;
+&nbsp;import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+&nbsp;import org.controlsfx.dialog.Wizard;
+&nbsp;import org.controlsfx.dialog.WizardPane;
+&nbsp;
+&nbsp;public class SearchConfigurationPage extends WizardPane {
+&nbsp;
+&nbsp;    private final UnlinkedFilesDialogViewModel viewModel;
+&nbsp;    private final ControlsFxVisualizer validationVisualizer;
+&nbsp;
+<b class="nc">&nbsp;    private final BooleanProperty invalidProperty = new SimpleBooleanProperty(false);</b>
+&nbsp;
+&nbsp;    private TextField directoryPathField;
+&nbsp;    private Button browseButton;
+&nbsp;    private ComboBox&lt;FileExtensionViewModel&gt; fileTypeCombo;
+&nbsp;    private ComboBox&lt;DateRange&gt; fileDateCombo;
+&nbsp;    private ComboBox&lt;ExternalFileSorter&gt; fileSortCombo;
+&nbsp;
+&nbsp;    public SearchConfigurationPage(UnlinkedFilesDialogViewModel viewModel,
+&nbsp;                                   BibDatabaseContext bibDatabaseContext,
+<b class="nc">&nbsp;                                   GuiPreferences preferences) {</b>
+<b class="nc">&nbsp;        this.viewModel = viewModel;</b>
+<b class="nc">&nbsp;        this.validationVisualizer = new ControlsFxVisualizer();</b>
+&nbsp;
+<b class="nc">&nbsp;        setHeaderText(Localization.lang(&quot;Configure search&quot;));</b>
+<b class="nc">&nbsp;        setupUI(bibDatabaseContext, preferences);</b>
+<b class="nc">&nbsp;        setupValidation();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BooleanProperty invalidProperty() {
+<b class="nc">&nbsp;        return invalidProperty;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void setupUI(BibDatabaseContext bibDatabaseContext, GuiPreferences preferences) {
+<b class="nc">&nbsp;        VBox wrapper = new VBox();</b>
+<b class="nc">&nbsp;        wrapper.setFillWidth(true);</b>
+<b class="nc">&nbsp;        wrapper.setPadding(new Insets(10));</b>
+<b class="nc">&nbsp;        wrapper.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        wrapper.setMaxHeight(Double.MAX_VALUE);</b>
+&nbsp;
+<b class="nc">&nbsp;        GridPane grid = new GridPane();</b>
+<b class="nc">&nbsp;        grid.setHgap(10);</b>
+<b class="nc">&nbsp;        grid.setVgap(10);</b>
+<b class="nc">&nbsp;        grid.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        VBox.setVgrow(grid, Priority.ALWAYS);</b>
+&nbsp;
+&nbsp;        /// Column Constraints for proper alignment and resizing
+<b class="nc">&nbsp;        ColumnConstraints labelColumn = new ColumnConstraints();</b>
+<b class="nc">&nbsp;        labelColumn.setHgrow(Priority.NEVER);</b>
+<b class="nc">&nbsp;        labelColumn.setMinWidth(100);</b>
+<b class="nc">&nbsp;        labelColumn.setPrefWidth(100);</b>
+&nbsp;
+<b class="nc">&nbsp;        ColumnConstraints fieldColumn = new ColumnConstraints();</b>
+<b class="nc">&nbsp;        fieldColumn.setHgrow(Priority.ALWAYS);</b>
+<b class="nc">&nbsp;        fieldColumn.setFillWidth(true);</b>
+<b class="nc">&nbsp;        fieldColumn.setMinWidth(300);</b>
+&nbsp;
+<b class="nc">&nbsp;        grid.getColumnConstraints().addAll(labelColumn, fieldColumn);</b>
+&nbsp;
+<b class="nc">&nbsp;        int row = 0;</b>
+&nbsp;
+&nbsp;        ///Directory selection
+<b class="nc">&nbsp;        Label dirLabel = new Label(Localization.lang(&quot;Directory&quot;));</b>
+<b class="nc">&nbsp;        grid.add(dirLabel, 0, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        HBox directoryBox = new HBox(5);</b>
+<b class="nc">&nbsp;        directoryBox.setAlignment(Pos.CENTER_LEFT);</b>
+<b class="nc">&nbsp;        directoryBox.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        HBox.setHgrow(directoryBox, Priority.ALWAYS);</b>
+&nbsp;
+<b class="nc">&nbsp;        directoryPathField = new TextField();</b>
+<b class="nc">&nbsp;        directoryPathField.textProperty().bindBidirectional(viewModel.directoryPathProperty());</b>
+<b class="nc">&nbsp;        directoryPathField.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        HBox.setHgrow(directoryPathField, Priority.ALWAYS);</b>
+&nbsp;
+<b class="nc">&nbsp;        browseButton = new Button();</b>
+<b class="nc">&nbsp;        browseButton.setGraphic(IconTheme.JabRefIcons.OPEN.getGraphicNode());</b>
+<b class="nc">&nbsp;        browseButton.setOnAction(e -&gt; viewModel.browseFileDirectory());</b>
+<b class="nc">&nbsp;        browseButton.setMinWidth(30);</b>
+<b class="nc">&nbsp;        browseButton.setPrefWidth(30);</b>
+&nbsp;
+<b class="nc">&nbsp;        directoryBox.getChildren().addAll(directoryPathField, browseButton);</b>
+<b class="nc">&nbsp;        GridPane.setHgrow(directoryBox, Priority.ALWAYS);</b>
+<b class="nc">&nbsp;        grid.add(directoryBox, 1, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        row++;</b>
+&nbsp;
+&nbsp;        /// File type filter
+<b class="nc">&nbsp;        Label fileTypeLabel = new Label(Localization.lang(&quot;File type&quot;));</b>
+<b class="nc">&nbsp;        grid.add(fileTypeLabel, 0, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileTypeCombo = new ComboBox&lt;&gt;();</b>
+<b class="nc">&nbsp;        fileTypeCombo.setItems(viewModel.getFileFilters());</b>
+<b class="nc">&nbsp;        fileTypeCombo.valueProperty().bindBidirectional(viewModel.selectedExtensionProperty());</b>
+&nbsp;
+<b class="nc">&nbsp;        new ViewModelListCellFactory&lt;FileExtensionViewModel&gt;()</b>
+<b class="nc">&nbsp;                .withText(FileExtensionViewModel::getDescription)</b>
+<b class="nc">&nbsp;                .withIcon(this::getIconForExtension)</b>
+<b class="nc">&nbsp;                .install(fileTypeCombo);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileTypeCombo.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        GridPane.setHgrow(fileTypeCombo, Priority.ALWAYS);</b>
+<b class="nc">&nbsp;        grid.add(fileTypeCombo, 1, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        row++;</b>
+&nbsp;
+&nbsp;        /// Date filter
+<b class="nc">&nbsp;        Label dateLabel = new Label(Localization.lang(&quot;Last edited&quot;));</b>
+<b class="nc">&nbsp;        grid.add(dateLabel, 0, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileDateCombo = new ComboBox&lt;&gt;();</b>
+<b class="nc">&nbsp;        fileDateCombo.setItems(viewModel.getDateFilters());</b>
+<b class="nc">&nbsp;        fileDateCombo.valueProperty().bindBidirectional(viewModel.selectedDateProperty());</b>
+&nbsp;
+<b class="nc">&nbsp;        new ViewModelListCellFactory&lt;DateRange&gt;()</b>
+<b class="nc">&nbsp;                .withText(DateRange::getDateRange)</b>
+<b class="nc">&nbsp;                .install(fileDateCombo);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileDateCombo.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        GridPane.setHgrow(fileDateCombo, Priority.ALWAYS);</b>
+<b class="nc">&nbsp;        grid.add(fileDateCombo, 1, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        row++;</b>
+&nbsp;
+&nbsp;        /// Sort order
+<b class="nc">&nbsp;        Label sortLabel = new Label(Localization.lang(&quot;Sort by&quot;));</b>
+<b class="nc">&nbsp;        grid.add(sortLabel, 0, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileSortCombo = new ComboBox&lt;&gt;();</b>
+<b class="nc">&nbsp;        fileSortCombo.setItems(viewModel.getSorters());</b>
+<b class="nc">&nbsp;        fileSortCombo.valueProperty().bindBidirectional(viewModel.selectedSortProperty());</b>
+&nbsp;
+<b class="nc">&nbsp;        new ViewModelListCellFactory&lt;ExternalFileSorter&gt;()</b>
+<b class="nc">&nbsp;                .withText(ExternalFileSorter::getSorter)</b>
+<b class="nc">&nbsp;                .install(fileSortCombo);</b>
+&nbsp;
+<b class="nc">&nbsp;        fileSortCombo.setMaxWidth(Double.MAX_VALUE);</b>
+<b class="nc">&nbsp;        GridPane.setHgrow(fileSortCombo, Priority.ALWAYS);</b>
+<b class="nc">&nbsp;        grid.add(fileSortCombo, 1, row);</b>
+&nbsp;
+<b class="nc">&nbsp;        wrapper.getChildren().add(grid);</b>
+<b class="nc">&nbsp;        setContent(wrapper);</b>
+<b class="nc">&nbsp;        loadConfiguration(bibDatabaseContext, preferences);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    ///  Returns the appropriate icon for a file extension.
+&nbsp;    ///  Returns null for &quot;Any file&quot; to display no icon.
+&nbsp;    private JabRefIcon getIconForExtension(FileExtensionViewModel fileExtension) {
+<b class="nc">&nbsp;        if (fileExtension == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        String name = fileExtension.getName().toLowerCase();</b>
+&nbsp;
+<b class="nc">&nbsp;        return switch (name) {</b>
+&nbsp;            case &quot;pdf&quot; -&gt;
+<b class="nc">&nbsp;                    IconTheme.JabRefIcons.PDF_FILE;</b>
+&nbsp;            case &quot;html&quot; -&gt;
+<b class="nc">&nbsp;                    IconTheme.JabRefIcons.WWW;</b>
+&nbsp;            case &quot;markdown&quot;,
+&nbsp;                 &quot;md&quot; -&gt;
+<b class="nc">&nbsp;                    IconTheme.JabRefIcons.FILE_TEXT;</b>
+&nbsp;            case &quot;any file&quot; -&gt;
+<b class="nc">&nbsp;                    null;</b>
+&nbsp;            default -&gt;
+<b class="nc">&nbsp;                    null;</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    private void setupValidation() {
+<b class="nc">&nbsp;        validationVisualizer.setDecoration(new IconValidationDecorator());</b>
+&nbsp;
+<b class="nc">&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc">&nbsp;            validationVisualizer.initVisualization(</b>
+<b class="nc">&nbsp;                    viewModel.directoryPathValidationStatus(),</b>
+&nbsp;                    directoryPathField);
+&nbsp;        });
+&nbsp;
+<b class="nc">&nbsp;        invalidProperty().bind(viewModel.directoryPathValidationStatus().validProperty().not());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void loadConfiguration(BibDatabaseContext bibDatabaseContext, GuiPreferences preferences) {
+<b class="nc">&nbsp;        directoryPathField.setText(</b>
+<b class="nc">&nbsp;                bibDatabaseContext.getFirstExistingFileDir(preferences.getFilePreferences())</b>
+<b class="nc">&nbsp;                                  .map(Path::toString)</b>
+<b class="nc">&nbsp;                                  .orElse(&quot;&quot;)</b>
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        UnlinkedFilesDialogPreferences savedPrefs = preferences.getUnlinkedFilesDialogPreferences();</b>
+&nbsp;
+<b class="nc">&nbsp;        FileExtensionViewModel selectedExtension = fileTypeCombo.getItems()</b>
+<b class="nc">&nbsp;                                                                .stream()</b>
+<b class="nc">&nbsp;                                                                .filter(item -&gt; Objects.equals(item.getName(), savedPrefs.getUnlinkedFilesSelectedExtension()))</b>
+<b class="nc">&nbsp;                                                                .findFirst()</b>
+<b class="nc">&nbsp;                                                                .orElseGet(() -&gt; new FileExtensionViewModel(</b>
+&nbsp;                                                                        StandardFileType.ANY_FILE,
+<b class="nc">&nbsp;                                                                        preferences.getExternalApplicationsPreferences()));</b>
+<b class="nc">&nbsp;        fileTypeCombo.getSelectionModel().select(selectedExtension);</b>
+<b class="nc">&nbsp;        fileDateCombo.getSelectionModel().select(savedPrefs.getUnlinkedFilesSelectedDateRange());</b>
+<b class="nc">&nbsp;        fileSortCombo.getSelectionModel().select(savedPrefs.getUnlinkedFilesSelectedSort());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void onEnteringPage(Wizard wizard) {
+<b class="nc">&nbsp;        viewModel.treeRootProperty().setValue(Optional.empty());</b>
+<b class="nc">&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="nc">&nbsp;            Node nextButton = this.lookupButton(ButtonType.NEXT);</b>
+<b class="nc">&nbsp;            if (nextButton != null) {</b>
+<b class="nc">&nbsp;                nextButton.disableProperty().bind(invalidProperty());</b>
+&nbsp;            }
+&nbsp;            /// Force layout refresh
+<b class="nc">&nbsp;            if (getScene() != null &amp;&amp; getScene().getWindow() != null) {</b>
+<b class="nc">&nbsp;                getScene().getWindow().sizeToScene();</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

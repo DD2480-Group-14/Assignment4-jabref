@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PlausibilityComparatorFactory</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.bibtex.comparator.plausibility</a>
+</div>
+
+<h1>Coverage Summary for Class: PlausibilityComparatorFactory (org.jabref.logic.bibtex.comparator.plausibility)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlausibilityComparatorFactory</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90,9%
+  </span>
+  <span class="absValue">
+    (10/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.bibtex.comparator.plausibility;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.jabref.model.entry.field.Field;
+&nbsp;import org.jabref.model.entry.field.FieldProperty;
+&nbsp;import org.jabref.model.entry.field.InternalField;
+&nbsp;
+<b class="fc">&nbsp;public enum PlausibilityComparatorFactory {</b>
+&nbsp;
+&nbsp;    // Single instance ensured by Java compiler
+<b class="fc">&nbsp;    INSTANCE;</b>
+&nbsp;
+&nbsp;    /// This implements &lt;https://github.com/JabRef/jabref/issues/12549&gt;
+&nbsp;    public Optional&lt;FieldValuePlausibilityComparator&gt; getPlausibilityComparator(Field field) {
+&nbsp;        // Similar code as [org.jabref.gui.fieldeditors.FieldEditors.getForField]
+<b class="fc">&nbsp;        if (field.getProperties().contains(FieldProperty.PERSON_NAMES)) {</b>
+<b class="fc">&nbsp;            return Optional.of(new PersonNamesPlausibilityComparator());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (field.getProperties().contains(FieldProperty.YEAR)) {</b>
+<b class="fc">&nbsp;            return Optional.of(new YearFieldValuePlausibilityComparator());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (field.getProperties().contains(FieldProperty.MONTH)) {</b>
+<b class="fc">&nbsp;            return Optional.of(new MonthPlausibilityComparator());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (InternalField.TYPE_HEADER == field) {</b>
+<b class="nc">&nbsp;            return Optional.of(new EntryTypePlausibilityComparator());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return Optional.empty();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

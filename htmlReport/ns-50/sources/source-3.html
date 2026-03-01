@@ -1,0 +1,174 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ColumnPreferences</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.gui.maintable</a>
+</div>
+
+<h1>Coverage Summary for Class: ColumnPreferences (org.jabref.gui.maintable)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ColumnPreferences</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.gui.maintable;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;
+&nbsp;public class ColumnPreferences {
+&nbsp;
+&nbsp;    public static final double DEFAULT_COLUMN_WIDTH = 100;
+&nbsp;    public static final double ICON_COLUMN_WIDTH = 16 + 12; // add some additional space to improve appearance
+&nbsp;
+&nbsp;    private final ObservableList&lt;MainTableColumnModel&gt; columns;
+&nbsp;    private final ObservableList&lt;MainTableColumnModel&gt; columnSortOrder;
+&nbsp;
+&nbsp;    public ColumnPreferences(List&lt;MainTableColumnModel&gt; columns,
+<b class="nc">&nbsp;                             List&lt;MainTableColumnModel&gt; columnSortOrder) {</b>
+<b class="nc">&nbsp;        this.columns = FXCollections.observableArrayList(columns);</b>
+<b class="nc">&nbsp;        this.columnSortOrder = FXCollections.observableArrayList(columnSortOrder);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// Creates object with default values
+&nbsp;    private ColumnPreferences() {
+<b class="nc">&nbsp;        this(</b>
+<b class="nc">&nbsp;                List.of(</b>
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.GROUPS, &quot;&quot;, 28),                        // groups, default width: 28
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.GROUP_ICONS, &quot;&quot;, 40),                   // group_icons, default width: 40
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.FILES, &quot;&quot;, 28),                         // files, default width: 28
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.LINKED_IDENTIFIER, &quot;&quot;, 28),             // linked_identifier, default width: 28
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;citationkey&quot;, 100),       // citationkey, default width: 100
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;entrytype&quot;, 75),          // entrytype, default width: 75
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;author/editor&quot;, 300),     // author/editor, default width: 300
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;title&quot;, 470),             // title, default width: 470
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;year&quot;, 60),               // year, default width: 60
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, &quot;journal/booktitle&quot;, 130), // journal, default width: 130
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.SPECIALFIELD, &quot;ranking&quot;, 50),           // ranking, default width: 50
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.SPECIALFIELD, &quot;readstatus&quot;, 50),        // readstatus, default width: 50
+&nbsp;                        new MainTableColumnModel(MainTableColumnModel.Type.SPECIALFIELD, &quot;priority&quot;, 50)           // priority, default width: 50
+&nbsp;                ),
+<b class="nc">&nbsp;                List.of()   // Empty list for columnSortOrder by default</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ColumnPreferences getDefault() {
+<b class="nc">&nbsp;        return new ColumnPreferences();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAll(ColumnPreferences columnPreferences) {
+<b class="nc">&nbsp;        this.columns.addAll(columnPreferences.getColumns());</b>
+<b class="nc">&nbsp;        this.columnSortOrder.addAll(columnPreferences.getColumnSortOrder());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObservableList&lt;MainTableColumnModel&gt; getColumns() {
+<b class="nc">&nbsp;        return columns;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObservableList&lt;MainTableColumnModel&gt; getColumnSortOrder() {
+<b class="nc">&nbsp;        return columnSortOrder;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setColumns(List&lt;MainTableColumnModel&gt; list) {
+<b class="nc">&nbsp;        columns.clear();</b>
+<b class="nc">&nbsp;        columns.addAll(list);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setColumnSortOrder(List&lt;MainTableColumnModel&gt; list) {
+<b class="nc">&nbsp;        columnSortOrder.clear();</b>
+<b class="nc">&nbsp;        columnSortOrder.addAll(list);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

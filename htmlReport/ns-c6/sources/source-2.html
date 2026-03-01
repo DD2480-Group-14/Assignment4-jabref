@@ -1,0 +1,298 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MergeBookkeeper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.git.merge.execution</a>
+</div>
+
+<h1>Coverage Summary for Class: MergeBookkeeper (org.jabref.logic.git.merge.execution)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MergeBookkeeper</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MergeBookkeeper$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/60)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.git.merge.execution;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.jabref.logic.JabRefException;
+&nbsp;import org.jabref.logic.git.GitHandler;
+&nbsp;import org.jabref.logic.git.io.GitFileReader;
+&nbsp;import org.jabref.logic.git.io.GitRevisionLocator;
+&nbsp;import org.jabref.logic.git.model.BookkeepingResult;
+&nbsp;import org.jabref.logic.git.model.PullPlan;
+&nbsp;import org.jabref.logic.git.util.GitHandlerRegistry;
+&nbsp;
+&nbsp;import org.eclipse.jgit.api.Git;
+&nbsp;import org.eclipse.jgit.api.errors.GitAPIException;
+&nbsp;import org.eclipse.jgit.dircache.DirCache;
+&nbsp;import org.eclipse.jgit.lib.CommitBuilder;
+&nbsp;import org.eclipse.jgit.lib.Constants;
+&nbsp;import org.eclipse.jgit.lib.ObjectId;
+&nbsp;import org.eclipse.jgit.lib.ObjectInserter;
+&nbsp;import org.eclipse.jgit.lib.PersonIdent;
+&nbsp;import org.eclipse.jgit.lib.RefUpdate;
+&nbsp;import org.eclipse.jgit.lib.Repository;
+&nbsp;import org.eclipse.jgit.revwalk.RevCommit;
+&nbsp;
+&nbsp;/// Record the GUI-produced merge result into Git history.
+&nbsp;/// Creates the right commit shape based on the merge graph:
+&nbsp;///  - BEHIND: fast-forward if content equals remote;
+&nbsp;///            otherwise create a new commit on top of `remote`.
+&nbsp;///  - DIVERGED: create a merge commit with parents [localHead, remote].
+&nbsp;///
+&nbsp;/// Preconditions:
+&nbsp;///  - GUI has already saved the final .bib file to disk.
+&nbsp;///  - No unrelated unstaged changes (defensive check recommended).
+&nbsp;public final class MergeBookkeeper {
+&nbsp;    private final GitHandlerRegistry registry;
+&nbsp;
+<b class="nc">&nbsp;    public MergeBookkeeper(GitHandlerRegistry registry) {</b>
+<b class="nc">&nbsp;        this.registry = registry;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BookkeepingResult resultRecord(Path bibFilePath, PullPlan computation) throws IOException, GitAPIException, JabRefException {
+<b class="nc">&nbsp;        Optional&lt;Path&gt; repoRoot = GitHandler.findRepositoryRoot(bibFilePath);</b>
+<b class="nc">&nbsp;        if (repoRoot.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new JabRefException(&quot;Finalize aborted: Path is not inside a Git repository.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        GitHandler gitHandler = registry.get(repoRoot.get());</b>
+&nbsp;
+<b class="nc">&nbsp;        try (Git git = gitHandler.open()) {</b>
+<b class="nc">&nbsp;            Repository repo = git.getRepository();</b>
+<b class="nc">&nbsp;            Path workTree = repo.getWorkTree().toPath().toRealPath();</b>
+<b class="nc">&nbsp;            Path bibPath = bibFilePath.toRealPath();</b>
+<b class="nc">&nbsp;            if (!bibPath.startsWith(workTree)) {</b>
+<b class="nc">&nbsp;                throw new JabRefException(&quot;Given .bib file is not inside repository&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            String relativePath = workTree.relativize(bibPath).toString().replace(&#39;\\&#39;, &#39;/&#39;);</b>
+&nbsp;
+<b class="nc">&nbsp;            RevCommit head = git.log().setMaxCount(1).call().iterator().next();</b>
+<b class="nc">&nbsp;            RevCommit localHead = computation.localHead();</b>
+<b class="nc">&nbsp;            RevCommit remote = computation.remote();</b>
+<b class="nc">&nbsp;            if (!head.equals(localHead)) {</b>
+<b class="nc">&nbsp;                throw new JabRefException(&quot;Finalize aborted: HEAD moved since prepare. Please re-run pull.&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Stage only the target file (GUI already wrote bytes)
+<b class="nc">&nbsp;            git.add().addFilepattern(relativePath).call();</b>
+&nbsp;
+&nbsp;            // Prepare current index tree for CommitBuilder
+&nbsp;            ObjectId treeId;
+<b class="nc">&nbsp;            try (ObjectInserter objectInserter = repo.newObjectInserter()) {</b>
+<b class="nc">&nbsp;                DirCache dirCache = repo.readDirCache();</b>
+<b class="nc">&nbsp;                treeId = dirCache.writeTree(objectInserter);</b>
+<b class="nc">&nbsp;                objectInserter.flush();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            String branchRef = repo.getFullBranch(); // refs/heads/&lt;branch&gt;</b>
+&nbsp;
+<b class="nc">&nbsp;            boolean localIsAncestorOfRemote = GitRevisionLocator.isAncestor(repo, localHead.getId(), remote.getId());</b>
+<b class="nc">&nbsp;            boolean bibEqualsRemote = blobEqualsCommitPath(git, remote, relativePath, bibPath);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (localIsAncestorOfRemote) { // BEHIND (we know remote is ahead of local)</b>
+<b class="nc">&nbsp;                if (bibEqualsRemote) {</b>
+<b class="nc">&nbsp;                    gitHandler.fastForwardTo(remote);</b>
+<b class="nc">&nbsp;                    return BookkeepingResult.fastForward();</b>
+&nbsp;                }
+&nbsp;                // Local working tree != remote: The current index tree needs to be attached as a new commit on top of the remote (single parent).
+<b class="nc">&nbsp;                return commitWithParents(repo, branchRef, treeId,</b>
+&nbsp;                        &quot;Semantic merge (GUI-applied) on top of remote&quot;,
+<b class="nc">&nbsp;                        remote.getId());</b>
+&nbsp;            } else {
+&nbsp;                // DIVERGED or other -&gt; merge commit with parents [localHead, remote]
+<b class="nc">&nbsp;                return commitWithParents(repo, branchRef, treeId,</b>
+&nbsp;                        &quot;Semantic merge (GUI-applied)&quot;,
+<b class="nc">&nbsp;                        localHead.getId(), remote.getId());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean blobEqualsCommitPath(Git git, RevCommit commit, String relativePath, Path file) throws JabRefException, IOException {
+<b class="nc">&nbsp;        Optional&lt;String&gt; content = GitFileReader.readFileFromCommit(git, commit, Path.of(relativePath));</b>
+<b class="nc">&nbsp;        if (content.isEmpty()) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        String remoteText = content.get();</b>
+<b class="nc">&nbsp;        String current = Files.readString(file);</b>
+<b class="nc">&nbsp;        return Objects.equals(remoteText, current);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private BookkeepingResult commitWithParents(Repository repo,
+&nbsp;                                                String branchRef,
+&nbsp;                                                ObjectId treeId,
+&nbsp;                                                String message,
+&nbsp;                                                ObjectId... parents) throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        try (ObjectInserter inserter = repo.newObjectInserter()) {</b>
+<b class="nc">&nbsp;            CommitBuilder commitBuilder = new CommitBuilder();</b>
+<b class="nc">&nbsp;            commitBuilder.setTreeId(treeId);</b>
+<b class="nc">&nbsp;            commitBuilder.setParentIds(parents);</b>
+<b class="nc">&nbsp;            commitBuilder.setAuthor(new PersonIdent(repo));</b>
+<b class="nc">&nbsp;            commitBuilder.setCommitter(new PersonIdent(repo));</b>
+<b class="nc">&nbsp;            commitBuilder.setMessage(message);</b>
+&nbsp;
+<b class="nc">&nbsp;            ObjectId newCommitId = inserter.insert(commitBuilder);</b>
+<b class="nc">&nbsp;            inserter.flush();</b>
+&nbsp;
+<b class="nc">&nbsp;            RefUpdate refUpdate = repo.updateRef(branchRef);</b>
+<b class="nc">&nbsp;            ObjectId expectedOld = repo.resolve(Constants.HEAD);</b>
+<b class="nc">&nbsp;            if (expectedOld != null) {</b>
+<b class="nc">&nbsp;                refUpdate.setExpectedOldObjectId(expectedOld);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            refUpdate.setNewObjectId(newCommitId);</b>
+<b class="nc">&nbsp;            refUpdate.setRefLogMessage(&quot;commit: &quot; + message, false);</b>
+<b class="nc">&nbsp;            RefUpdate.Result result = refUpdate.update();</b>
+<b class="nc">&nbsp;            switch (result) {</b>
+&nbsp;                case FAST_FORWARD:
+&nbsp;                case NEW:
+&nbsp;                case FORCED:
+&nbsp;                case NO_CHANGE:
+&nbsp;                case RENAMED:
+<b class="nc">&nbsp;                    return BookkeepingResult.newCommit(newCommitId.getName());</b>
+&nbsp;                default:
+<b class="nc">&nbsp;                    throw new IOException(&quot;Ref update failed: &quot; + result);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

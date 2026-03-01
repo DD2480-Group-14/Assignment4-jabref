@@ -1,0 +1,302 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LinkedFileTransferHelper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.externalfiles</a>
+</div>
+
+<h1>Coverage Summary for Class: LinkedFileTransferHelper (org.jabref.logic.externalfiles)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LinkedFileTransferHelper</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/70)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.externalfiles;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.UncheckedIOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.StandardCopyOption;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.jabref.logic.FilePreferences;
+&nbsp;import org.jabref.logic.util.io.FileUtil;
+&nbsp;import org.jabref.model.TransferInformation;
+&nbsp;import org.jabref.model.TransferMode;
+&nbsp;import org.jabref.model.database.BibDatabaseContext;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;import org.jabref.model.entry.LinkedFile;
+&nbsp;
+&nbsp;import org.jooq.lambda.Unchecked;
+&nbsp;import org.jspecify.annotations.NullMarked;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;
+<b class="nc">&nbsp;@NullMarked</b>
+<b class="nc">&nbsp;public class LinkedFileTransferHelper {</b>
+&nbsp;
+<b class="nc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(LinkedFileTransferHelper.class);</b>
+&nbsp;
+&nbsp;    /// Adjusts linked files when copying entries from source to target context.
+&nbsp;    /// Files that are not reachable from the target context will be copied.
+&nbsp;    /// Files in the target context whose relative paths differ from the source will have their paths adjusted.
+&nbsp;    ///
+&nbsp;    /// There is no need to know the source entry, because we are interested in the file paths only.
+&nbsp;    ///
+&nbsp;    /// @param filePreferences     File preferences for both contexts
+&nbsp;    /// @param transferInformation The source database context where files are currently located - and the transferMode
+&nbsp;    /// @param targetContext       The target database context where files should be accessible
+&nbsp;    /// @param targetEntry         The entry in the targetContext
+&nbsp;    public static void adjustLinkedFilesForTarget(
+&nbsp;            FilePreferences filePreferences,
+&nbsp;            TransferInformation transferInformation,
+&nbsp;            BibDatabaseContext targetContext,
+&nbsp;            BibEntry targetEntry
+&nbsp;    ) {
+<b class="nc">&nbsp;        if (!filePreferences.shouldAdjustFileLinksOnTransfer()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Handling {}&quot;, targetEntry.getKeyAuthorTitleYear());</b>
+&nbsp;
+<b class="nc">&nbsp;        boolean fileLinksChanged = false;</b>
+<b class="nc">&nbsp;        List&lt;LinkedFile&gt; linkedFiles = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (LinkedFile linkedFile : targetEntry.getFiles()) {</b>
+<b class="nc">&nbsp;            LOGGER.debug(&quot;Handling file {}&quot;, linkedFile);</b>
+<b class="nc">&nbsp;            if (linkedFile.getLink().isEmpty() || linkedFile.isOnlineLink()) {</b>
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Path linkedFileAsPath = Path.of(linkedFile.getLink());</b>
+<b class="nc">&nbsp;            if (linkedFileAsPath.isAbsolute()) {</b>
+<b class="nc">&nbsp;                LOGGER.trace(&quot;File {} is an absolute path, skipping&quot;, linkedFileAsPath);</b>
+&nbsp;                // In case the file is an absolute path, there is no need to adjust anything
+&nbsp;                // [impl-&gt;req~logic.externalfiles.file-transfer.reachable-no-copy~1]
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+&nbsp;            // Check target bibdatabase context offers any directory to store files in
+&nbsp;            // Condition works, because absolute paths are already skipped
+<b class="nc">&nbsp;            Optional&lt;Path&gt; targetPrimaryPathOpt = getPrimaryPath(targetContext, filePreferences);</b>
+<b class="nc">&nbsp;            if (targetPrimaryPathOpt.isEmpty()) {</b>
+<b class="nc">&nbsp;                LOGGER.trace(&quot;Target context does not have a primary directory, skipping file {}&quot;, linkedFileAsPath);</b>
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+<b class="nc">&nbsp;            Path targetPrimaryPath = targetPrimaryPathOpt.get();</b>
+&nbsp;
+<b class="nc">&nbsp;            Optional&lt;Path&gt; sourcePathOpt = linkedFile.findIn(transferInformation.bibDatabaseContext(), filePreferences);</b>
+<b class="nc">&nbsp;            if (sourcePathOpt.isEmpty()) {</b>
+<b class="nc">&nbsp;                LOGGER.trace(&quot;File does not exist, just keep the broken link&quot;);</b>
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+<b class="nc">&nbsp;            Path sourcePath = sourcePathOpt.get();</b>
+<b class="nc">&nbsp;            assert !linkedFileAsPath.isAbsolute();</b>
+&nbsp;
+<b class="nc">&nbsp;            if ((linkedFileAsPath.getParent() != null) // the case with no parent is handled at the next if (&quot;Try to find in other directory&quot;)</b>
+<b class="nc">&nbsp;                    &amp;&amp; linkedFile.findIn(targetContext, filePreferences).isPresent()) {</b>
+&nbsp;                // [impl-&gt;req~logic.externalfiles.file-transfer.reachable-no-copy~1]
+<b class="nc">&nbsp;                LOGGER.debug(&quot;File is reachable as is&quot;);</b>
+&nbsp;                // File is reachable as is - no need to copy
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+&nbsp;            // Try to find in other directory
+&nbsp;
+&nbsp;            // [impl-&gt;req~logic.externalfiles.file-transfer.reachable-no-copy~1]
+<b class="nc">&nbsp;            List&lt;Path&gt; directories = targetContext.getFileDirectories(filePreferences);</b>
+&nbsp;            // first check on the path directly and if not found then try based on filename
+<b class="nc">&nbsp;            Optional&lt;Path&gt; otherPlaceFile = findInSubDirs(linkedFileAsPath, directories);</b>
+&nbsp;            // If the path contains directory components, try searching for just the filename as a fallback.
+&nbsp;            // This handles cases where the file was moved to a different subdirectory structure in the target.
+<b class="nc">&nbsp;            if (otherPlaceFile.isEmpty() &amp;&amp; (linkedFileAsPath.getNameCount() &gt; 1)) {</b>
+<b class="nc">&nbsp;                otherPlaceFile = findInSubDirs(linkedFileAsPath.getFileName(), directories);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (otherPlaceFile.isPresent()) {</b>
+<b class="nc">&nbsp;                LOGGER.debug(&quot;Found in other place {}&quot;, otherPlaceFile);</b>
+<b class="nc">&nbsp;                String newLink = FileUtil.relativize(otherPlaceFile.get(), directories).toString();</b>
+<b class="nc">&nbsp;                LOGGER.debug(&quot;Setting new link {}&quot;, newLink);</b>
+<b class="nc">&nbsp;                linkedFile.setLink(newLink);</b>
+<b class="nc">&nbsp;                fileLinksChanged = true;</b>
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if ((transferInformation.transferMode() == TransferMode.COPY) &amp;&amp; !filePreferences.shouldCopyLinkedFilesOnTransfer()) {</b>
+<b class="nc">&nbsp;                LOGGER.debug(&quot;File copy not allowed by preferences&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            if ((transferInformation.transferMode() == TransferMode.MOVE) &amp;&amp; !filePreferences.shouldMoveLinkedFilesOnTransfer()) {</b>
+<b class="nc">&nbsp;                LOGGER.debug(&quot;File move not allowed by preferences&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            linkedFileAsPath = targetPrimaryPath.resolve(linkedFileAsPath);</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                Files.createDirectories(linkedFileAsPath.getParent());</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                LOGGER.error(&quot;Could not create directory for linked files at {}&quot;, linkedFileAsPath, e);</b>
+<b class="nc">&nbsp;                linkedFiles.add(linkedFile);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (!Files.exists(linkedFileAsPath)) {</b>
+&nbsp;                try {
+&nbsp;                    // [impl-&gt;req~logic.externalfiles.file-transfer.not-reachable-same-path~1]
+<b class="nc">&nbsp;                    if (transferInformation.transferMode() == TransferMode.COPY) {</b>
+<b class="nc">&nbsp;                        LOGGER.debug(&quot;Copying file from {} to {}&quot;, sourcePath, linkedFileAsPath);</b>
+<b class="nc">&nbsp;                        Files.copy(sourcePath, linkedFileAsPath, StandardCopyOption.COPY_ATTRIBUTES);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        LOGGER.debug(&quot;Moving file from {} to {}&quot;, sourcePath, linkedFileAsPath);</b>
+<b class="nc">&nbsp;                        assert transferInformation.transferMode() == TransferMode.MOVE;</b>
+<b class="nc">&nbsp;                        Files.move(sourcePath, linkedFileAsPath, StandardCopyOption.ATOMIC_MOVE);</b>
+&nbsp;                    }
+&nbsp;                } catch (IOException e) {
+<b class="nc">&nbsp;                    LOGGER.error(&quot;Could not copy file from {} to {}&quot;, sourcePath, linkedFileAsPath, e);</b>
+<b class="nc">&nbsp;                    linkedFiles.add(linkedFile);</b>
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (fileLinksChanged) {</b>
+<b class="nc">&nbsp;            targetEntry.setFiles(linkedFiles);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private static Optional&lt;Path&gt; findInSubDirs(Path path, List&lt;Path&gt; directories) {
+&nbsp;        try {
+<b class="nc">&nbsp;            return directories</b>
+<b class="nc">&nbsp;                    .stream()</b>
+<b class="nc">&nbsp;                    .filter(Files::exists)</b>
+<b class="nc">&nbsp;                    .flatMap(Unchecked.function(Files::walk))</b>
+<b class="nc">&nbsp;                    .filter(p -&gt; p.endsWith(path))</b>
+<b class="nc">&nbsp;                    .sorted()</b>
+<b class="nc">&nbsp;                    .findFirst();</b>
+&nbsp;        } catch (UncheckedIOException ex) {
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Could not search for file {} in {}&quot;, path, directories, ex);</b>
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /// Gets the primary directory path for the given context.
+&nbsp;    /// This is a utility method extracted from the original implementation.
+&nbsp;    ///
+&nbsp;    /// @param context         The database context
+&nbsp;    /// @param filePreferences File preferences for the context
+&nbsp;    /// @return Optional containing the primary directory path, or empty if none found
+&nbsp;    static Optional&lt;Path&gt; getPrimaryPath(BibDatabaseContext context, FilePreferences filePreferences) {
+<b class="nc">&nbsp;        return context.getFileDirectories(filePreferences).stream().findFirst();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

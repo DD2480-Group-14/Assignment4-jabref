@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CopyOrMoveFieldContentTabViewModel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.gui.edit.automaticfiededitor.copyormovecontent</a>
+</div>
+
+<h1>Coverage Summary for Class: CopyOrMoveFieldContentTabViewModel (org.jabref.gui.edit.automaticfiededitor.copyormovecontent)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CopyOrMoveFieldContentTabViewModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (9/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64,3%
+  </span>
+  <span class="absValue">
+    (18/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,7%
+  </span>
+  <span class="absValue">
+    (63/71)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.gui.edit.automaticfiededitor.copyormovecontent;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import javafx.beans.binding.BooleanBinding;
+&nbsp;import javafx.beans.property.BooleanProperty;
+&nbsp;import javafx.beans.property.ObjectProperty;
+&nbsp;import javafx.beans.property.SimpleBooleanProperty;
+&nbsp;import javafx.beans.property.SimpleObjectProperty;
+&nbsp;
+&nbsp;import org.jabref.gui.StateManager;
+&nbsp;import org.jabref.gui.edit.automaticfiededitor.AbstractAutomaticFieldEditorTabViewModel;
+&nbsp;import org.jabref.gui.edit.automaticfiededitor.FieldHelper;
+&nbsp;import org.jabref.gui.edit.automaticfiededitor.LastAutomaticFieldEditorEdit;
+&nbsp;import org.jabref.gui.edit.automaticfiededitor.MoveFieldValueAction;
+&nbsp;import org.jabref.gui.undo.NamedCompoundEdit;
+&nbsp;import org.jabref.gui.undo.UndoableFieldChange;
+&nbsp;import org.jabref.logic.util.strings.StringUtil;
+&nbsp;import org.jabref.model.database.BibDatabase;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;import org.jabref.model.entry.field.Field;
+&nbsp;import org.jabref.model.entry.field.StandardField;
+&nbsp;
+&nbsp;import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+&nbsp;import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+&nbsp;import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+&nbsp;import de.saxsys.mvvmfx.utils.validation.Validator;
+&nbsp;
+&nbsp;public class CopyOrMoveFieldContentTabViewModel extends AbstractAutomaticFieldEditorTabViewModel {
+&nbsp;    public static final int TAB_INDEX = 1;
+<b class="fc">&nbsp;    private final ObjectProperty&lt;Field&gt; fromField = new SimpleObjectProperty&lt;&gt;(StandardField.ABSTRACT);</b>
+&nbsp;
+<b class="fc">&nbsp;    private final ObjectProperty&lt;Field&gt; toField = new SimpleObjectProperty&lt;&gt;(StandardField.AUTHOR);</b>
+&nbsp;
+<b class="fc">&nbsp;    private final BooleanProperty overwriteFieldContent = new SimpleBooleanProperty(Boolean.FALSE);</b>
+&nbsp;    private final List&lt;BibEntry&gt; selectedEntries;
+&nbsp;
+&nbsp;    private final Validator toFieldValidator;
+&nbsp;
+&nbsp;    private final BooleanBinding canMove;
+&nbsp;
+&nbsp;    private final BooleanBinding canSwap;
+&nbsp;
+&nbsp;    public CopyOrMoveFieldContentTabViewModel(List&lt;BibEntry&gt; selectedEntries, BibDatabase bibDatabase, StateManager stateManager) {
+<b class="fc">&nbsp;        super(bibDatabase, stateManager);</b>
+<b class="fc">&nbsp;        this.selectedEntries = new ArrayList&lt;&gt;(selectedEntries);</b>
+&nbsp;
+<b class="fc">&nbsp;        FieldHelper.getSetFieldsOnly(this.selectedEntries, getAllFields())</b>
+<b class="fc">&nbsp;                   .stream()</b>
+<b class="fc">&nbsp;                   .findFirst()</b>
+<b class="fc">&nbsp;                   .ifPresent(fromField::set);</b>
+&nbsp;
+<b class="fc">&nbsp;        toFieldValidator = new FunctionBasedValidator&lt;&gt;(toField, field -&gt; {</b>
+<b class="pc">&nbsp;            if (StringUtil.isBlank(field.getName())) {</b>
+<b class="nc">&nbsp;                return ValidationMessage.error(&quot;Field name cannot be empty&quot;);</b>
+<b class="pc">&nbsp;            } else if (StringUtil.containsWhitespace(field.getName())) {</b>
+<b class="nc">&nbsp;                return ValidationMessage.error(&quot;Field name cannot have whitespace characters&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        canMove = BooleanBinding.booleanExpression(toFieldValidationStatus().validProperty())</b>
+<b class="fc">&nbsp;                                .and(overwriteFieldContentProperty());</b>
+&nbsp;
+<b class="fc">&nbsp;        canSwap = BooleanBinding.booleanExpression(toFieldValidationStatus().validProperty())</b>
+<b class="fc">&nbsp;                                .and(overwriteFieldContentProperty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ValidationStatus toFieldValidationStatus() {
+<b class="fc">&nbsp;        return toFieldValidator.getValidationStatus();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BooleanBinding canMoveProperty() {
+<b class="nc">&nbsp;        return canMove;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BooleanBinding canSwapProperty() {
+<b class="nc">&nbsp;        return canSwap;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Field getFromField() {
+<b class="nc">&nbsp;        return fromField.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectProperty&lt;Field&gt; fromFieldProperty() {
+<b class="fc">&nbsp;        return fromField;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Field getToField() {
+<b class="nc">&nbsp;        return toField.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ObjectProperty&lt;Field&gt; toFieldProperty() {
+<b class="fc">&nbsp;        return toField;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isOverwriteFieldContent() {
+<b class="nc">&nbsp;        return overwriteFieldContent.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BooleanProperty overwriteFieldContentProperty() {
+<b class="fc">&nbsp;        return overwriteFieldContent;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void copyValue() {
+<b class="fc">&nbsp;        NamedCompoundEdit copyFieldValueEdit = new NamedCompoundEdit(&quot;COPY_FIELD_VALUE&quot;);</b>
+<b class="fc">&nbsp;        int affectedEntriesCount = 0;</b>
+<b class="fc">&nbsp;        for (BibEntry entry : selectedEntries) {</b>
+<b class="fc">&nbsp;            String fromFieldValue = entry.getField(fromField.get()).orElse(&quot;&quot;);</b>
+<b class="fc">&nbsp;            String toFieldValue = entry.getField(toField.get()).orElse(&quot;&quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;            if (overwriteFieldContent.get() || StringUtil.isBlank(toFieldValue)) {</b>
+<b class="fc">&nbsp;                if (StringUtil.isNotBlank(fromFieldValue)) {</b>
+<b class="fc">&nbsp;                    entry.setField(toField.get(), fromFieldValue);</b>
+<b class="fc">&nbsp;                    copyFieldValueEdit.addEdit(new UndoableFieldChange(entry,</b>
+<b class="fc">&nbsp;                            toField.get(),</b>
+&nbsp;                            toFieldValue,
+&nbsp;                            fromFieldValue));
+<b class="fc">&nbsp;                    affectedEntriesCount++;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        if (copyFieldValueEdit.hasEdits()) {</b>
+<b class="fc">&nbsp;            copyFieldValueEdit.end();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(</b>
+<b class="fc">&nbsp;                affectedEntriesCount, TAB_INDEX, copyFieldValueEdit</b>
+&nbsp;        ));
+&nbsp;    }
+&nbsp;
+&nbsp;    public void moveValue() {
+<b class="fc">&nbsp;        NamedCompoundEdit moveEdit = new NamedCompoundEdit(&quot;MOVE_EDIT&quot;);</b>
+<b class="fc">&nbsp;        int affectedEntriesCount = 0;</b>
+<b class="fc">&nbsp;        if (overwriteFieldContent.get()) {</b>
+<b class="fc">&nbsp;            affectedEntriesCount = new MoveFieldValueAction(fromField.get(),</b>
+<b class="fc">&nbsp;                    toField.get(),</b>
+&nbsp;                    selectedEntries,
+<b class="fc">&nbsp;                    moveEdit).executeAndGetAffectedEntriesCount();</b>
+&nbsp;
+<b class="pc">&nbsp;            if (moveEdit.hasEdits()) {</b>
+<b class="fc">&nbsp;                moveEdit.end();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(</b>
+<b class="fc">&nbsp;                affectedEntriesCount, TAB_INDEX, moveEdit</b>
+&nbsp;        ));
+&nbsp;    }
+&nbsp;
+&nbsp;    public void swapValues() {
+<b class="fc">&nbsp;        NamedCompoundEdit swapFieldValuesEdit = new NamedCompoundEdit(&quot;SWAP_FIELD_VALUES&quot;);</b>
+<b class="fc">&nbsp;        int affectedEntriesCount = 0;</b>
+<b class="fc">&nbsp;        for (BibEntry entry : selectedEntries) {</b>
+<b class="fc">&nbsp;            String fromFieldValue = entry.getField(fromField.get()).orElse(&quot;&quot;);</b>
+<b class="fc">&nbsp;            String toFieldValue = entry.getField(toField.get()).orElse(&quot;&quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;            if (overwriteFieldContent.get() &amp;&amp; StringUtil.isNotBlank(fromFieldValue) &amp;&amp; StringUtil.isNotBlank(toFieldValue)) {</b>
+<b class="fc">&nbsp;                entry.setField(toField.get(), fromFieldValue);</b>
+<b class="fc">&nbsp;                entry.setField(fromField.get(), toFieldValue);</b>
+&nbsp;
+<b class="fc">&nbsp;                swapFieldValuesEdit.addEdit(new UndoableFieldChange(</b>
+&nbsp;                        entry,
+<b class="fc">&nbsp;                        toField.get(),</b>
+&nbsp;                        toFieldValue,
+&nbsp;                        fromFieldValue
+&nbsp;                ));
+&nbsp;
+<b class="fc">&nbsp;                swapFieldValuesEdit.addEdit(new UndoableFieldChange(</b>
+&nbsp;                        entry,
+<b class="fc">&nbsp;                        fromField.get(),</b>
+&nbsp;                        fromFieldValue,
+&nbsp;                        toFieldValue
+&nbsp;                ));
+<b class="fc">&nbsp;                affectedEntriesCount++;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (swapFieldValuesEdit.hasEdits()) {</b>
+<b class="fc">&nbsp;            swapFieldValuesEdit.end();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(</b>
+<b class="fc">&nbsp;                affectedEntriesCount, TAB_INDEX, swapFieldValuesEdit</b>
+&nbsp;        ));
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;BibEntry&gt; getSelectedEntries() {
+<b class="nc">&nbsp;        return selectedEntries;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

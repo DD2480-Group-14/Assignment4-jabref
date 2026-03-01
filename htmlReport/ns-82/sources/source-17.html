@@ -1,0 +1,164 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > InsertUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.gui.util</a>
+</div>
+
+<h1>Coverage Summary for Class: InsertUtil (org.jabref.gui.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InsertUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    21,4%
+  </span>
+  <span class="absValue">
+    (3/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.gui.util;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.jabref.gui.DialogService;
+&nbsp;import org.jabref.gui.StateManager;
+&nbsp;import org.jabref.gui.externalfiles.EntryImportHandlerTracker;
+&nbsp;import org.jabref.gui.externalfiles.ImportHandler;
+&nbsp;import org.jabref.logic.l10n.Localization;
+&nbsp;import org.jabref.model.TransferInformation;
+&nbsp;import org.jabref.model.database.BibDatabaseContext;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;
+&nbsp;import org.jspecify.annotations.Nullable;
+&nbsp;
+<b class="nc">&nbsp;public class InsertUtil {</b>
+&nbsp;
+&nbsp;    /// @param jabRefClipboardTransferData - can be null if called via clipboard and clipboard content was NOT created by JabRef
+&nbsp;    public static void addEntriesWithFeedback(@Nullable TransferInformation jabRefClipboardTransferData,
+&nbsp;                                              List&lt;BibEntry&gt; entriesToAdd,
+&nbsp;                                              BibDatabaseContext targetDatabaseContext,
+&nbsp;                                              String successMessage,
+&nbsp;                                              String partialMessage,
+&nbsp;                                              DialogService dialogService,
+&nbsp;                                              ImportHandler importHandler,
+&nbsp;                                              StateManager stateManager
+&nbsp;    ) {
+<b class="fc">&nbsp;        EntryImportHandlerTracker tracker = new EntryImportHandlerTracker(stateManager, entriesToAdd.size());</b>
+<b class="fc">&nbsp;        tracker.setOnFinish(() -&gt; {</b>
+<b class="nc">&nbsp;            int importedCount = tracker.getImportedCount();</b>
+<b class="nc">&nbsp;            int skippedCount = tracker.getSkippedCount();</b>
+&nbsp;
+<b class="nc">&nbsp;            String targetName = targetDatabaseContext.getDatabasePath()</b>
+<b class="nc">&nbsp;                                                     .map(path -&gt; path.getFileName().toString())</b>
+<b class="nc">&nbsp;                                                     .orElse(Localization.lang(&quot;target library&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;            if (importedCount == entriesToAdd.size()) {</b>
+<b class="nc">&nbsp;                dialogService.notify(Localization.lang(successMessage, String.valueOf(importedCount), targetName));</b>
+<b class="nc">&nbsp;            } else if (importedCount == 0) {</b>
+<b class="nc">&nbsp;                dialogService.notify(Localization.lang(&quot;No entry was copied to %0&quot;, targetName));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                dialogService.notify(Localization.lang(partialMessage, String.valueOf(importedCount), targetName, String.valueOf(skippedCount)));</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        importHandler.importEntriesWithDuplicateCheck(jabRefClipboardTransferData, entriesToAdd, tracker);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

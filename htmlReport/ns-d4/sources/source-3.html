@@ -1,0 +1,299 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OpenCitationsFetcher</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.importer.fetcher.citation.opencitations</a>
+</div>
+
+<h1>Coverage Summary for Class: OpenCitationsFetcher (org.jabref.logic.importer.fetcher.citation.opencitations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenCitationsFetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/72)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.importer.fetcher.citation.opencitations;
+&nbsp;
+&nbsp;import java.net.MalformedURLException;
+&nbsp;import java.net.URI;
+&nbsp;import java.net.URISyntaxException;
+&nbsp;import java.net.URL;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.function.Function;
+&nbsp;
+&nbsp;import org.jabref.logic.importer.FetcherException;
+&nbsp;import org.jabref.logic.importer.ImporterPreferences;
+&nbsp;import org.jabref.logic.importer.fetcher.CrossRef;
+&nbsp;import org.jabref.logic.importer.fetcher.citation.CitationFetcher;
+&nbsp;import org.jabref.logic.net.URLDownload;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;import org.jabref.model.entry.field.StandardField;
+&nbsp;import org.jabref.model.entry.identifier.DOI;
+&nbsp;
+&nbsp;import com.google.gson.Gson;
+&nbsp;import com.google.gson.JsonSyntaxException;
+&nbsp;import org.jspecify.annotations.NullMarked;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;
+&nbsp;@NullMarked
+&nbsp;public class OpenCitationsFetcher implements CitationFetcher {
+&nbsp;    public static final String FETCHER_NAME = &quot;OpenCitations&quot;;
+&nbsp;
+<b class="nc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(OpenCitationsFetcher.class);</b>
+&nbsp;    private static final String API_BASE_URL = &quot;https://api.opencitations.net/index/v2&quot;;
+<b class="nc">&nbsp;    private static final Gson GSON = new Gson();</b>
+&nbsp;
+&nbsp;    private final ImporterPreferences importerPreferences;
+<b class="nc">&nbsp;    private final CrossRef crossRefFetcher = new CrossRef();</b>
+&nbsp;
+<b class="nc">&nbsp;    public OpenCitationsFetcher(ImporterPreferences importerPreferences) {</b>
+<b class="nc">&nbsp;        this.importerPreferences = importerPreferences;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getName() {
+<b class="nc">&nbsp;        return FETCHER_NAME;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Optional&lt;URI&gt; getApiUrl(String endpoint, BibEntry entry) {
+<b class="nc">&nbsp;        Optional&lt;DOI&gt; doi = entry.getDOI();</b>
+<b class="nc">&nbsp;        if (doi.isEmpty()) {</b>
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String apiUrl = API_BASE_URL + &quot;/&quot; + endpoint + &quot;/doi:&quot; + doi.get().asString();</b>
+<b class="nc">&nbsp;            return Optional.of(new URI(apiUrl));</b>
+&nbsp;        } catch (URISyntaxException e) {
+<b class="nc">&nbsp;            LOGGER.debug(&quot;Could not create API URI for endpoint: {}&quot;, endpoint, e);</b>
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;BibEntry&gt; getReferences(BibEntry entry) throws FetcherException {
+<b class="nc">&nbsp;        Optional&lt;URI&gt; apiUri = getReferencesApiUri(entry);</b>
+<b class="nc">&nbsp;        if (apiUri.isEmpty()) {</b>
+<b class="nc">&nbsp;            return List.of();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return fetchCitationData(apiUri.get(), CitationItem::citedIdentifiers);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;BibEntry&gt; getCitations(BibEntry entry) throws FetcherException {
+<b class="nc">&nbsp;        Optional&lt;URI&gt; apiUri = getCitationsApiUri(entry);</b>
+<b class="nc">&nbsp;        if (apiUri.isEmpty()) {</b>
+<b class="nc">&nbsp;            return List.of();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return fetchCitationData(apiUri.get(), CitationItem::citingIdentifiers);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// API explained at &lt;https://api.opencitations.net/index/v2#/references/{id}&gt; and &lt;https://api.opencitations.net/index/v2#/citations/{id}&gt;
+&nbsp;    private List&lt;BibEntry&gt; fetchCitationData(URI apiUri, Function&lt;CitationItem, List&lt;CitationItem.IdentifierWithField&gt;&gt; identifierExtractor) throws FetcherException {
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Fetching citation data from: {}&quot;, apiUri);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            URL url = apiUri.toURL();</b>
+<b class="nc">&nbsp;            URLDownload urlDownload = new URLDownload(importerPreferences, url);</b>
+<b class="nc">&nbsp;            importerPreferences.getApiKey(getName())</b>
+<b class="nc">&nbsp;                               .ifPresent(apiKey -&gt; urlDownload.addHeader(&quot;authorization&quot;, apiKey));</b>
+&nbsp;
+<b class="nc">&nbsp;            String jsonResponse = urlDownload.asString();</b>
+<b class="nc">&nbsp;            CitationItem[] citationItems = GSON.fromJson(jsonResponse, CitationItem[].class);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (citationItems == null || citationItems.length == 0) {</b>
+<b class="nc">&nbsp;                return List.of();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            List&lt;BibEntry&gt; entries = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for (CitationItem item : citationItems) {</b>
+<b class="nc">&nbsp;                List&lt;CitationItem.IdentifierWithField&gt; identifiers = identifierExtractor.apply(item);</b>
+<b class="nc">&nbsp;                if (!identifiers.isEmpty()) {</b>
+<b class="nc">&nbsp;                    entries.add(fetchBibEntryFromIdentifiers(identifiers));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            return entries;</b>
+&nbsp;        } catch (MalformedURLException e) {
+<b class="nc">&nbsp;            throw new FetcherException(&quot;Malformed URL&quot;, e);</b>
+&nbsp;        } catch (JsonSyntaxException e) {
+<b class="nc">&nbsp;            throw new FetcherException(&quot;Could not parse JSON response from OpenCitations&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private BibEntry fetchBibEntryFromIdentifiers(List&lt;CitationItem.IdentifierWithField&gt; identifiers) {
+<b class="nc">&nbsp;        Optional&lt;CitationItem.IdentifierWithField&gt; doiIdentifier = identifiers.stream()</b>
+<b class="nc">&nbsp;                                                                              .filter(id -&gt; id.field().equals(StandardField.DOI))</b>
+<b class="nc">&nbsp;                                                                              .findFirst();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (doiIdentifier.isPresent()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                Optional&lt;BibEntry&gt; fetchedEntry = crossRefFetcher.performSearchById(doiIdentifier.get().value());</b>
+<b class="nc">&nbsp;                if (fetchedEntry.isPresent()) {</b>
+<b class="nc">&nbsp;                    BibEntry entry = fetchedEntry.get();</b>
+<b class="nc">&nbsp;                    for (CitationItem.IdentifierWithField identifier : identifiers) {</b>
+<b class="nc">&nbsp;                        if (!entry.hasField(identifier.field())) {</b>
+<b class="nc">&nbsp;                            entry.setField(identifier.field(), identifier.value());</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="nc">&nbsp;                    return entry;</b>
+&nbsp;                }
+&nbsp;            } catch (FetcherException e) {
+<b class="nc">&nbsp;                LOGGER.warn(&quot;Could not fetch BibEntry for DOI: {}&quot;, doiIdentifier.get().value(), e);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        BibEntry bibEntry = new BibEntry();</b>
+<b class="nc">&nbsp;        for (CitationItem.IdentifierWithField identifier : identifiers) {</b>
+<b class="nc">&nbsp;            bibEntry.setField(identifier.field(), identifier.value());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return bibEntry;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// API explained at &lt;https://api.opencitations.net/index/v2#/reference-count/{id}&gt;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;Integer&gt; getCitationCount(BibEntry entry) throws FetcherException {
+<b class="nc">&nbsp;        Optional&lt;URI&gt; apiUri = getApiUrl(&quot;citation-count&quot;, entry);</b>
+<b class="nc">&nbsp;        if (apiUri.isEmpty()) {</b>
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        LOGGER.debug(&quot;Citation count URL: {}&quot;, apiUri.get());</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            URL url = apiUri.get().toURL();</b>
+<b class="nc">&nbsp;            URLDownload urlDownload = new URLDownload(importerPreferences, url);</b>
+<b class="nc">&nbsp;            importerPreferences.getApiKey(getName())</b>
+<b class="nc">&nbsp;                               .ifPresent(apiKey -&gt; urlDownload.addHeader(&quot;authorization&quot;, apiKey));</b>
+&nbsp;
+<b class="nc">&nbsp;            String jsonResponse = urlDownload.asString();</b>
+<b class="nc">&nbsp;            CountResponse countResponse = GSON.fromJson(jsonResponse, CountResponse.class);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (countResponse == null) {</b>
+<b class="nc">&nbsp;                return Optional.empty();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            int count = countResponse.countAsInt();</b>
+<b class="nc">&nbsp;            return count &gt; 0 ? Optional.of(count) : Optional.empty();</b>
+&nbsp;        } catch (MalformedURLException e) {
+<b class="nc">&nbsp;            throw new FetcherException(&quot;Malformed URL&quot;, e);</b>
+&nbsp;        } catch (JsonSyntaxException e) {
+<b class="nc">&nbsp;            throw new FetcherException(&quot;Could not parse JSON response from OpenCitations&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;URI&gt; getReferencesApiUri(BibEntry entry) {
+<b class="nc">&nbsp;        return getApiUrl(&quot;references&quot;, entry);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;URI&gt; getCitationsApiUri(BibEntry entry) {
+<b class="nc">&nbsp;        return getApiUrl(&quot;citations&quot;, entry);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

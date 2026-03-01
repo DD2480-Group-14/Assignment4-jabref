@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DoiCleanup</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.cleanup</a>
+</div>
+
+<h1>Coverage Summary for Class: DoiCleanup (org.jabref.logic.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DoiCleanup</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.cleanup;
+&nbsp;
+&nbsp;import java.net.URLDecoder;
+&nbsp;import java.nio.charset.StandardCharsets;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.concurrent.atomic.AtomicBoolean;
+&nbsp;
+&nbsp;import org.jabref.logic.formatter.bibtexfields.ClearFormatter;
+&nbsp;import org.jabref.model.FieldChange;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;import org.jabref.model.entry.field.Field;
+&nbsp;import org.jabref.model.entry.field.StandardField;
+&nbsp;import org.jabref.model.entry.field.UnknownField;
+&nbsp;import org.jabref.model.entry.identifier.ArXivIdentifier;
+&nbsp;import org.jabref.model.entry.identifier.DOI;
+&nbsp;
+&nbsp;/// Formats the DOI (e.g. removes http part) and also infers DOIs from the note, url, eprint or ee fields.
+<b class="nc">&nbsp;public class DoiCleanup implements CleanupJob {</b>
+&nbsp;
+&nbsp;    /// Fields to check for DOIs.
+<b class="nc">&nbsp;    private static final List&lt;Field&gt; FIELDS = List.of(</b>
+&nbsp;            StandardField.NOTE,
+&nbsp;            StandardField.URL,
+&nbsp;            StandardField.EPRINT,
+&nbsp;            new UnknownField(&quot;ee&quot;)
+&nbsp;    );
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;FieldChange&gt; cleanup(BibEntry entry) {
+<b class="nc">&nbsp;        List&lt;FieldChange&gt; changes = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        AtomicBoolean validDoiExistsInDoiField = new AtomicBoolean(false);</b>
+&nbsp;
+<b class="nc">&nbsp;        entry.getField(StandardField.DOI)</b>
+<b class="nc">&nbsp;             .ifPresent(currentlyStoredDoi -&gt; {</b>
+&nbsp;                 String decodedDoiFieldValue;
+&nbsp;                 try {
+<b class="nc">&nbsp;                     decodedDoiFieldValue = URLDecoder.decode(currentlyStoredDoi, StandardCharsets.UTF_8);</b>
+&nbsp;                 } catch (IllegalArgumentException e) {
+&nbsp;                     // If decoding fails, we keep the original value
+<b class="nc">&nbsp;                     decodedDoiFieldValue = currentlyStoredDoi;</b>
+&nbsp;                 }
+&nbsp;
+<b class="nc">&nbsp;                 String cleanCurrentlyStoredDoi = decodedDoiFieldValue;</b>
+&nbsp;
+<b class="nc">&nbsp;                 DOI.parse(cleanCurrentlyStoredDoi)</b>
+<b class="nc">&nbsp;                    .map(DOI::asString)</b>
+<b class="nc">&nbsp;                    .ifPresent(parsedDoi -&gt; {</b>
+<b class="nc">&nbsp;                        validDoiExistsInDoiField.set(true);</b>
+<b class="nc">&nbsp;                        if (!parsedDoi.equals(cleanCurrentlyStoredDoi)) {</b>
+<b class="nc">&nbsp;                            entry.setField(StandardField.DOI, parsedDoi);</b>
+&nbsp;
+<b class="nc">&nbsp;                            FieldChange change = new FieldChange(entry, StandardField.DOI, currentlyStoredDoi, parsedDoi);</b>
+<b class="nc">&nbsp;                            changes.add(change);</b>
+&nbsp;                        }
+&nbsp;
+&nbsp;                        // Doi field seems to contain Doi -&gt; cleanup note, url, ee field
+<b class="nc">&nbsp;                        for (Field field : FIELDS) {</b>
+<b class="nc">&nbsp;                            entry.getField(field)</b>
+<b class="nc">&nbsp;                                 .flatMap(DOI::parse) // only returns something if **complete** field is a DOI</b>
+<b class="nc">&nbsp;                                 .ifPresent(_ -&gt; removeFieldValue(entry, field, changes));</b>
+&nbsp;                        }
+&nbsp;                    });
+&nbsp;             });
+&nbsp;
+<b class="nc">&nbsp;        for (Field field : FIELDS) {</b>
+<b class="nc">&nbsp;            entry.getField(field)</b>
+<b class="nc">&nbsp;                 .flatMap(DOI::parse) // covers a full DOI only</b>
+<b class="nc">&nbsp;                 .ifPresent(doi -&gt; {</b>
+<b class="nc">&nbsp;                     if (!validDoiExistsInDoiField.get()) {</b>
+<b class="nc">&nbsp;                         Optional&lt;FieldChange&gt; change = entry.setField(StandardField.DOI, doi.asString());</b>
+<b class="nc">&nbsp;                         change.ifPresent(changes::add);</b>
+&nbsp;                     }
+<b class="nc">&nbsp;                     removeFieldValue(entry, field, changes);</b>
+&nbsp;                 });
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!validDoiExistsInDoiField.get()) {</b>
+&nbsp;            // Try to infer DOI from arXiv ID in eprint field and set it if DOI field is empty
+<b class="nc">&nbsp;            entry.getField(StandardField.EPRINT)</b>
+<b class="nc">&nbsp;                 .flatMap(ArXivIdentifier::parse)</b>
+<b class="nc">&nbsp;                 .flatMap(ArXivIdentifier::inferDOI)</b>
+<b class="nc">&nbsp;                 .ifPresent(inferredDoi -&gt; {</b>
+<b class="nc">&nbsp;                     Optional&lt;FieldChange&gt; change = entry.setField(StandardField.DOI, inferredDoi.asString());</b>
+<b class="nc">&nbsp;                     change.ifPresent(changes::add);</b>
+&nbsp;                 });
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return changes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void removeFieldValue(BibEntry entry, Field field, List&lt;FieldChange&gt; changes) {
+<b class="nc">&nbsp;        CleanupJob eraser = new FieldFormatterCleanup(field, new ClearFormatter());</b>
+<b class="nc">&nbsp;        changes.addAll(eraser.cleanup(entry));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

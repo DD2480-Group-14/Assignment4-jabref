@@ -1,0 +1,174 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CompositeSearchBasedFetcher</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.importer.fetcher</a>
+</div>
+
+<h1>Coverage Summary for Class: CompositeSearchBasedFetcher (org.jabref.logic.importer.fetcher)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CompositeSearchBasedFetcher</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42,9%
+  </span>
+  <span class="absValue">
+    (3/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35,3%
+  </span>
+  <span class="absValue">
+    (6/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.importer.fetcher;
+&nbsp;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;import org.jabref.logic.help.HelpFile;
+&nbsp;import org.jabref.logic.importer.FetcherException;
+&nbsp;import org.jabref.logic.importer.ImporterPreferences;
+&nbsp;import org.jabref.logic.importer.SearchBasedFetcher;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;import org.jabref.model.search.query.BaseQueryNode;
+&nbsp;
+&nbsp;import org.jspecify.annotations.NullMarked;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;
+&nbsp;/// Implements &quot;search-pre configured&quot;
+&nbsp;public class CompositeSearchBasedFetcher implements SearchBasedFetcher {
+&nbsp;
+&nbsp;    public static final String FETCHER_NAME = &quot;Search pre-selected&quot;;
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(CompositeSearchBasedFetcher.class);</b>
+&nbsp;
+&nbsp;    private final Set&lt;SearchBasedFetcher&gt; searchBasedFetchers;
+&nbsp;    private final ImporterPreferences importerPreferences;
+&nbsp;    private final int maximumNumberOfReturnedResults;
+&nbsp;
+&nbsp;    /// @param searchBasedFetchers all available search-based fetchers
+&nbsp;    @NullMarked
+<b class="fc">&nbsp;    public CompositeSearchBasedFetcher(Set&lt;SearchBasedFetcher&gt; searchBasedFetchers, ImporterPreferences importerPreferences, int maximumNumberOfReturnedResults) {</b>
+<b class="fc">&nbsp;        this.searchBasedFetchers = Set.copyOf(searchBasedFetchers);</b>
+<b class="fc">&nbsp;        this.importerPreferences = importerPreferences;</b>
+<b class="fc">&nbsp;        this.maximumNumberOfReturnedResults = maximumNumberOfReturnedResults;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return FETCHER_NAME;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Optional&lt;HelpFile&gt; getHelpPage() {
+<b class="nc">&nbsp;        return Optional.empty();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;BibEntry&gt; performSearch(BaseQueryNode queryList) throws FetcherException {
+<b class="nc">&nbsp;        Collection&lt;String&gt; catalogs = importerPreferences.getCatalogs();</b>
+<b class="nc">&nbsp;        return searchBasedFetchers.parallelStream()</b>
+&nbsp;                                  // Removal the Composite Fetcher instance from its own fetcher set is not required any more as the constructor stores a copy of the set.
+&nbsp;                                  // .filter(searchBasedFetcher -&gt; searchBasedFetcher != this)
+&nbsp;                                  // Remove any unselected Fetcher instance
+<b class="nc">&nbsp;                                  .filter(searchBasedFetcher -&gt; catalogs.stream()</b>
+<b class="nc">&nbsp;                                                                        .anyMatch(name -&gt; name.equals(searchBasedFetcher.getName())))</b>
+<b class="nc">&nbsp;                                  .flatMap(searchBasedFetcher -&gt; {</b>
+&nbsp;                                      try {
+&nbsp;                                          // All entries have to be converted before into one format, this is necessary for the format conversion
+<b class="nc">&nbsp;                                          return searchBasedFetcher.performSearch(queryList).stream();</b>
+&nbsp;                                      } catch (FetcherException e) {
+<b class="nc">&nbsp;                                          LOGGER.warn(&quot;{} API request failed&quot;, searchBasedFetcher.getName(), e);</b>
+<b class="nc">&nbsp;                                          return Stream.empty();</b>
+&nbsp;                                      }
+&nbsp;                                  })
+<b class="nc">&nbsp;                                  .limit(maximumNumberOfReturnedResults)</b>
+<b class="nc">&nbsp;                                  .toList();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

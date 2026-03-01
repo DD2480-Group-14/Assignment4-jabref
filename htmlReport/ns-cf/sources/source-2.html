@@ -1,0 +1,351 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ConferenceUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.icore</a>
+</div>
+
+<h1>Coverage Summary for Class: ConferenceUtils (org.jabref.logic.icore)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConferenceUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/62)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/66)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.icore;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.TreeSet;
+&nbsp;import java.util.regex.Matcher;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+&nbsp;import org.jspecify.annotations.NonNull;
+&nbsp;
+&nbsp;public final class ConferenceUtils {
+&nbsp;    // Regex that&#39;ll extract the string within the first deepest set of parentheses
+&nbsp;    // A slight modification of: https://stackoverflow.com/a/17759264
+<b class="nc">&nbsp;    private static final Pattern PARENTHESES_PATTERN = Pattern.compile(&quot;\\(([^()]*)\\)&quot;);</b>
+&nbsp;    // Regex that will match all years of type 19XX or 20XX;
+&nbsp;    private static final String YEAR_REGEX = &quot;(19|20)\\d{2}&quot;;
+&nbsp;    /*
+&nbsp;        Regex that will match:
+&nbsp;        - ordinals of form [number][st|nd|rd|th] as in 1st, 2nd, 3rd, 4th, and so on
+&nbsp;        - ordinals in LaTeX syntax of [number]\textsuperscript{[st|nd|rd|th]} as in 3\textsuperscript{rd},
+&nbsp;          17\textsuperscript{th}, etc. These are just the same ordinals as above but with the added LaTeX text syntax.
+&nbsp;     */
+&nbsp;    private static final String ORDINAL_REGEX = &quot;\\d+(\\\\textsuperscript\\{)?(st|nd|rd|th)}?&quot;;
+<b class="nc">&nbsp;    private static final Pattern YEAR_OR_ORDINAL_PATTERN = Pattern.compile(YEAR_REGEX + &quot;|&quot; + ORDINAL_REGEX);</b>
+&nbsp;    // Stopwords must not be contained in the ICORE data
+<b class="nc">&nbsp;    private static final Set&lt;String&gt; TITLE_STOPWORDS = Set.of(</b>
+&nbsp;            &quot;proceedings&quot;, &quot;volume&quot;, &quot;part&quot;, &quot;papers&quot;,
+&nbsp;            &quot;january&quot;, &quot;february&quot;, &quot;march&quot;, &quot;april&quot;, &quot;may&quot;, &quot;june&quot;, &quot;july&quot;, &quot;august&quot;, &quot;september&quot;, &quot;october&quot;, &quot;november&quot;, &quot;december&quot;
+&nbsp;    );
+&nbsp;    private static final int MAX_CANDIDATES_THRESHOLD = 50;
+&nbsp;    private static final int DELIMITER_START = -1;
+&nbsp;
+<b class="nc">&nbsp;    private ConferenceUtils() {</b>
+<b class="nc">&nbsp;        throw new UnsupportedOperationException(&quot;Cannot instantiate a utility class&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// Attempts to extract the string enclosed in the first deepest set of parentheses from the given input string.
+&nbsp;    ///
+&nbsp;    /// This method uses a regular expression `\(([^()]*)\)` to find the innermost parenthesized substring.
+&nbsp;    /// Only the **first match** is considered; any additional matching substrings in the input are ignored.
+&nbsp;    ///
+&nbsp;    ///
+&nbsp;    ///
+&nbsp;    /// If a match is found, leading and trailing whitespace around the string is stripped. If the resulting string is not
+&nbsp;    /// empty, it is returned wrapped in an `Optional`. Otherwise, an empty `Optional` is returned.
+&nbsp;    ///
+&nbsp;    ///
+&nbsp;    /// Examples:
+&nbsp;    ///
+&nbsp;    /// - `&quot;(SERA)&quot;` -&gt; `Optional.of(&quot;SERA&quot;)`
+&nbsp;    /// - `&quot;Conference ( ABC )&quot;` -&gt; `Optional.of(&quot;ABC&quot;)`
+&nbsp;    /// - `&quot;This (SERA) has multiple (CONF) acronyms&quot;` -&gt; `Optional.of(&quot;SERA&quot;)`
+&nbsp;    /// - `&quot;Input with empty () parentheses&quot;` -&gt; `Optional.empty()`
+&nbsp;    /// - `&quot;Input with empty (        ) whitespace in parens&quot;` -&gt; `Optional.empty()`
+&nbsp;    /// - `&quot;&quot;` -&gt; `Optional.empty()`
+&nbsp;    ///
+&nbsp;    /// @param input the string to search, must not be `null`
+&nbsp;    /// @return an `Optional` containing the extracted and trimmed string from the first set of parentheses,
+&nbsp;    /// or `Optional.empty()` if no string is found
+&nbsp;    public static Optional&lt;String&gt; extractStringFromParentheses(@NonNull String input) {
+<b class="nc">&nbsp;        if (input.indexOf(&#39;(&#39;) &lt; 0) {</b>
+<b class="nc">&nbsp;            return Optional.empty();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Matcher matcher = PARENTHESES_PATTERN.matcher(input);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (matcher.find()) {</b>
+<b class="nc">&nbsp;            String match = matcher.group(1).strip();</b>
+<b class="nc">&nbsp;            if (!match.isEmpty()) {</b>
+<b class="nc">&nbsp;                return Optional.of(match);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return Optional.empty();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// Generates possible acronym candidates from the given input string by splitting on common delimiters and extracting
+&nbsp;    /// substrings within the specified cutoff length.
+&nbsp;    ///
+&nbsp;    /// Candidates are ordered in a {@link TreeSet} such that longer strings are positioned before shorter ones, with
+&nbsp;    /// lexicographical ordering used to break ties. This prevents overfitting on composite acronyms during lookup (like
+&nbsp;    /// between `IEEE-IV` and `IV`) by pushing the shorter substrings to the end.
+&nbsp;    /// A maximum of 50 candidates are generated to avoid excessive expansion.
+&nbsp;    /// The splitting delimiters are `whitespace`, `,`, `&#39;`, `_`, `:`, `.`, and `-`.
+&nbsp;    /// Delimiters between acronyms are kept, if the cutoff length allows.
+&nbsp;    ///
+&nbsp;    ///
+&nbsp;    /// For example, given the input string `&quot;IEEE-IV&#39;2022&quot;` and a cutoff of `11`, this method generates the
+&nbsp;    /// following candidates in order: `&quot;IEEE-IV&quot;, &quot;IV&#39;2022&quot;, &quot;2022&quot;, &quot;IEEE&quot;, &quot;IV&quot;`. Notice that `&quot;IEEE-IV&quot;`
+&nbsp;    /// is positioned ahead and retains the `-` in between.
+&nbsp;    ///
+&nbsp;    /// @param input  the raw string to extract acronym candidates from, must not be `null`
+&nbsp;    /// @param cutoff the maximum allowed length of each candidate substring; candidates longer than this are discarded
+&nbsp;    /// @return a set of acronym candidates ordered by descending length and then lexicographically,
+&nbsp;    /// or an empty set if no valid candidates are found
+&nbsp;    public static Set&lt;String&gt; generateAcronymCandidates(@NonNull String input, int cutoff) {
+<b class="nc">&nbsp;        if (input.isEmpty() || cutoff &lt;= 0) {</b>
+<b class="nc">&nbsp;            return Set.of();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Integer&gt; bounds = new ArrayList&lt;&gt;();</b>
+&nbsp;        // Collect delimiter boundaries: -1 (start), every delimiter index, and input length (end).
+<b class="nc">&nbsp;        bounds.add(DELIMITER_START);</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; input.length(); i++) {</b>
+<b class="nc">&nbsp;            if (isAcronymDelimiter(input.charAt(i))) {</b>
+<b class="nc">&nbsp;                bounds.add(i);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        bounds.add(input.length());</b>
+&nbsp;
+&nbsp;        // TreeSet to ensure ordering; with longer strings positioned ahead
+<b class="nc">&nbsp;        Set&lt;String&gt; candidates = new TreeSet&lt;&gt;((a, b) -&gt; {</b>
+<b class="nc">&nbsp;            int lengthCompare = Integer.compare(b.length(), a.length());</b>
+<b class="nc">&nbsp;            return lengthCompare != 0 ? lengthCompare : a.compareTo(b);</b>
+&nbsp;        });
+&nbsp;        // Process bounds and generate candidates
+<b class="nc">&nbsp;        for (int i = 0; i &lt; bounds.size() - 1; i++) {</b>
+<b class="nc">&nbsp;            for (int j = i + 1; j &lt; bounds.size(); j++) {</b>
+<b class="nc">&nbsp;                if (candidates.size() &gt;= MAX_CANDIDATES_THRESHOLD) {</b>
+<b class="nc">&nbsp;                    return candidates;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                int start = bounds.get(i) + 1;</b>
+<b class="nc">&nbsp;                int end = bounds.get(j);</b>
+<b class="nc">&nbsp;                int len = end - start;</b>
+<b class="nc">&nbsp;                if (len &gt; 0 &amp;&amp; len &lt;= cutoff) {</b>
+<b class="nc">&nbsp;                    String candidate = trimDelimiters(input.substring(start, end));</b>
+<b class="nc">&nbsp;                    if (!candidate.isEmpty()) {</b>
+<b class="nc">&nbsp;                        candidates.add(candidate);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return candidates;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static String trimDelimiters(String candidate) {
+<b class="nc">&nbsp;        int left = 0;</b>
+<b class="nc">&nbsp;        int right = candidate.length() - 1;</b>
+&nbsp;
+&nbsp;        // Move left pointer until we find a non-delimiter
+<b class="nc">&nbsp;        while (left &lt;= right &amp;&amp; isAcronymDelimiter(candidate.charAt(left))) {</b>
+<b class="nc">&nbsp;            left++;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Move right pointer until we find a non-delimiter
+<b class="nc">&nbsp;        while (right &gt;= left &amp;&amp; isAcronymDelimiter(candidate.charAt(right))) {</b>
+<b class="nc">&nbsp;            right--;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return left &lt;= right ? candidate.substring(left, right + 1) : &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean isAcronymDelimiter(char c) {
+<b class="nc">&nbsp;        return Character.isWhitespace(c) ||</b>
+&nbsp;                c == &#39;\&#39;&#39; || c == &#39;,&#39; || c == &#39;_&#39; ||
+&nbsp;                c == &#39;:&#39; || c == &#39;.&#39; || c == &#39;-&#39;;
+&nbsp;    }
+&nbsp;
+&nbsp;    /// Normalizes a raw conference title query string into a simplified form suitable for fuzzy matching.
+&nbsp;    ///
+&nbsp;    /// The normalization process performs the following steps:
+&nbsp;    ///
+&nbsp;    /// &lt;ol&gt;
+&nbsp;    /// - Removes all substrings enclosed in parentheses, e.g., `&quot;proceedings (ICSE 2022)&quot;` -&gt; `&quot;Proceedings&quot;`.
+&nbsp;    /// - Removes all years of form `19XX` or `20xx` (e.g., `1999`, `2022`) and ordinals in
+&nbsp;    /// regular form (e.g., `1st`, `2nd`, `3rd`) as well as in LaTeX syntax (e.g.,
+&nbsp;    /// `3\textsuperscript{rd`} or `17\textsuperscript{th`}).
+&nbsp;    /// - Splits the input into alphanumeric tokens, discarding stopwords found in the `TITLE_STOPWORDS` set
+&nbsp;    /// (which includes months, or other common stopwords like `proceedings`, `papers`, etc.)
+&nbsp;    /// - Concatenates the remaining tokens into a normalized string without delimiters.
+&nbsp;    /// - Removes leading false-start tokens like `&quot;ofthe&quot;`, `&quot;of&quot;`, or `&quot;the&quot;`.
+&nbsp;    /// &lt;/ol&gt;
+&nbsp;    ///
+&nbsp;    /// Note that the input is expected to already be lowercased before calling this method.
+&nbsp;    ///
+&nbsp;    ///
+&nbsp;    /// An example:
+&nbsp;    /// `&quot;proceedings of the 3rd international conference on machine learning (icml 2018)&quot;` -&gt;
+&nbsp;    /// `&quot;internationalconferenceonmachinelearning&quot;`
+&nbsp;    ///
+&nbsp;    /// @param input the pre-lowercased raw string to normalize, must not be `null`
+&nbsp;    /// @return a normalized string representation of the input
+&nbsp;    public static String normalize(@NonNull String input) {
+<b class="nc">&nbsp;        StringBuilder normalized = new StringBuilder();</b>
+<b class="nc">&nbsp;        StringBuilder currentToken = new StringBuilder();</b>
+&nbsp;
+<b class="nc">&nbsp;        input = removeAllParenthesesWithContent(input);</b>
+<b class="nc">&nbsp;        input = YEAR_OR_ORDINAL_PATTERN.matcher(input).replaceAll(&quot;&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        for (int i = 0; i &lt; input.length(); i++) {</b>
+<b class="nc">&nbsp;            char currentChar = input.charAt(i);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (Character.isLetterOrDigit(currentChar)) {</b>
+<b class="nc">&nbsp;                currentToken.append(currentChar);</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            normalizeTokenAndFlush(currentToken, normalized);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        normalizeTokenAndFlush(currentToken, normalized);</b>
+&nbsp;
+<b class="nc">&nbsp;        return normalized.toString()</b>
+<b class="nc">&nbsp;                         .replaceFirst(&quot;^(ofthe|of|the)+&quot;, &quot;&quot;);   // remove any false starts</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static void normalizeTokenAndFlush(StringBuilder currentToken, StringBuilder output) {
+<b class="nc">&nbsp;        if (currentToken.isEmpty()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        String token = currentToken.toString();</b>
+<b class="nc">&nbsp;        currentToken.setLength(0);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (TITLE_STOPWORDS.contains(token)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        output.append(token);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static String removeAllParenthesesWithContent(String input) {
+<b class="nc">&nbsp;        Matcher parenthesesMatcher = PARENTHESES_PATTERN.matcher(input);</b>
+&nbsp;
+<b class="nc">&nbsp;        while (parenthesesMatcher.find()) {</b>
+<b class="nc">&nbsp;            input = parenthesesMatcher.replaceAll(&quot;&quot;);</b>
+<b class="nc">&nbsp;            parenthesesMatcher = PARENTHESES_PATTERN.matcher(input);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return input;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EntryTriples</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.git.merge.planning.util</a>
+</div>
+
+<h1>Coverage Summary for Class: EntryTriples (org.jabref.logic.git.merge.planning.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EntryTriples</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.git.merge.planning.util;
+&nbsp;
+&nbsp;import java.util.LinkedHashMap;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.function.Function;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;import org.jabref.model.database.BibDatabaseContext;
+&nbsp;import org.jabref.model.entry.BibEntry;
+&nbsp;
+&nbsp;public final class EntryTriples {
+&nbsp;    public final Map&lt;String, BibEntry&gt; baseMap;
+&nbsp;    public final Map&lt;String, BibEntry&gt; localMap;
+&nbsp;    public final Map&lt;String, BibEntry&gt; remoteMap;
+&nbsp;
+&nbsp;    private EntryTriples(Map&lt;String, BibEntry&gt; baseMap,
+&nbsp;                         Map&lt;String, BibEntry&gt; localMap,
+<b class="nc">&nbsp;                         Map&lt;String, BibEntry&gt; remoteMap) {</b>
+<b class="nc">&nbsp;        this.baseMap = baseMap;</b>
+<b class="nc">&nbsp;        this.localMap = localMap;</b>
+<b class="nc">&nbsp;        this.remoteMap = remoteMap;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static EntryTriples from(BibDatabaseContext base, BibDatabaseContext local, BibDatabaseContext remote) {
+<b class="nc">&nbsp;        return new EntryTriples(</b>
+<b class="nc">&nbsp;                getCitationKeyToEntryMap(base),</b>
+<b class="nc">&nbsp;                getCitationKeyToEntryMap(local),</b>
+<b class="nc">&nbsp;                getCitationKeyToEntryMap(remote)</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Map&lt;String, BibEntry&gt; getCitationKeyToEntryMap(BibDatabaseContext context) {
+<b class="nc">&nbsp;        return context.getDatabase().getEntries().stream()</b>
+<b class="nc">&nbsp;                      .filter(entry -&gt; entry.getCitationKey().isPresent())</b>
+<b class="nc">&nbsp;                      .collect(Collectors.toMap(</b>
+<b class="nc">&nbsp;                              entry -&gt; entry.getCitationKey().get(),</b>
+<b class="nc">&nbsp;                              Function.identity(),</b>
+<b class="nc">&nbsp;                              (existing, replacement) -&gt; replacement,</b>
+&nbsp;                              LinkedHashMap::new
+&nbsp;                      ));
+&nbsp;    }
+&nbsp;
+&nbsp;    // TODO(merge/analyze): Entry key source &amp; the role of BibDatabaseDiff
+&nbsp;    //  Previous approach:
+&nbsp;    //  1) Run BibDatabaseDiff twice (base→local, base→remote).
+&nbsp;    //     BibDatabaseDiff localDiff  = BibDatabaseDiff.compare(base, local);
+&nbsp;    //     BibDatabaseDiff remoteDiff = BibDatabaseDiff.compare(base, remote);
+&nbsp;    //  2) Build citationKey→BibEntryDiff maps and use the union of their key sets as the worklist.
+&nbsp;    //     Map&lt;String, BibEntryDiff&gt; localDiffMap  = indexByCitationKey(localDiff.getEntryDifferences());
+&nbsp;    //     Map&lt;String, BibEntryDiff&gt; remoteDiffMap = indexByCitationKey(remoteDiff.getEntryDifferences());
+&nbsp;    //     Set&lt;String&gt; allKeys = union(localDiffMap.keySet(), remoteDiffMap.keySet());
+&nbsp;    //  3) For each key, resolve base/local/remote via the diff maps, then detect conflicts and build the auto plan.
+&nbsp;    //  Problem: Using only diff-derived keys misses pure deletions → E05/E08 fail.
+&nbsp;    //  - E05: base has &#39;a&#39;, local=∅, remote=∅ → compare(base, ∅) yields no entryDiff, so &#39;a&#39; never enters the worklist.
+&nbsp;    //  - E08: base has &#39;a&#39;, local==base, remote=∅ → remote diff empty; &#39;a&#39; is dropped.
+&nbsp;    //  Root cause: when the “new” DB is empty, BibDatabaseDiff returns no entryDiff.
+&nbsp;    //  However, should we keep BibDatabaseDiff for meta/preamble/bibstrings, logging, and potential optimizations,
+&nbsp;
+&nbsp;    public Set&lt;String&gt; allKeys() {
+<b class="nc">&nbsp;        Set&lt;String&gt; all = new LinkedHashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        all.addAll(baseMap.keySet());</b>
+<b class="nc">&nbsp;        all.addAll(localMap.keySet());</b>
+<b class="nc">&nbsp;        all.addAll(remoteMap.keySet());</b>
+<b class="nc">&nbsp;        return all;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

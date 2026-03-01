@@ -1,0 +1,165 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ReferencesBlockFromPdfFinder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.logic.importer.plaincitation</a>
+</div>
+
+<h1>Coverage Summary for Class: ReferencesBlockFromPdfFinder (org.jabref.logic.importer.plaincitation)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReferencesBlockFromPdfFinder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.logic.importer.plaincitation;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.regex.Matcher;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+&nbsp;import org.jabref.logic.util.PdfUtils;
+&nbsp;
+&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;
+<b class="nc">&nbsp;public class ReferencesBlockFromPdfFinder {</b>
+&nbsp;
+<b class="nc">&nbsp;    private static final Logger LOGGER = LoggerFactory.getLogger(ReferencesBlockFromPdfFinder.class);</b>
+<b class="nc">&nbsp;    private static final Pattern REFERENCES = Pattern.compile(&quot;References&quot;, Pattern.CASE_INSENSITIVE);</b>
+&nbsp;
+&nbsp;    /// Extracts the text from all pages containing references. It simply goes from the last page backwards until there is probably no reference anymore.
+&nbsp;    public static String getReferencesPagesText(PDDocument document) throws IOException {
+<b class="nc">&nbsp;        int lastPage = document.getNumberOfPages();</b>
+<b class="nc">&nbsp;        String result = prependToResult(&quot;&quot;, document, lastPage);</b>
+&nbsp;
+&nbsp;        // Same matcher uses as in {@link containsWordReferences}
+<b class="nc">&nbsp;        Matcher matcher = ReferencesBlockFromPdfFinder.REFERENCES.matcher(result);</b>
+<b class="nc">&nbsp;        if (!matcher.find()) {</b>
+&nbsp;            // Ensure that not too much is returned
+<b class="nc">&nbsp;            LOGGER.warn(&quot;Could not found &#39;References&#39;. Returning last page only.&quot;);</b>
+<b class="nc">&nbsp;            return PdfUtils.getPageContents(document, lastPage);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int end = matcher.end();</b>
+<b class="nc">&nbsp;        return result.substring(end);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /// This simply goes from the given page backwards until there is probably no reference anymore.
+&nbsp;    private static String prependToResult(String currentText, PDDocument document, int pageNumber) throws IOException {
+<b class="nc">&nbsp;        String pageContents = PdfUtils.getPageContents(document, pageNumber);</b>
+<b class="nc">&nbsp;        String result = pageContents + currentText;</b>
+<b class="nc">&nbsp;        if (!ReferencesBlockFromPdfFinder.containsWordReferences(pageContents) &amp;&amp; (pageNumber &gt; 0)) {</b>
+<b class="nc">&nbsp;            return prependToResult(result, document, pageNumber - 1);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean containsWordReferences(String result) {
+<b class="nc">&nbsp;        Matcher matcher = ReferencesBlockFromPdfFinder.REFERENCES.matcher(result);</b>
+<b class="nc">&nbsp;        return matcher.find();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>

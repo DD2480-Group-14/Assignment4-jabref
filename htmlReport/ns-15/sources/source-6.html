@@ -1,0 +1,201 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CleanupJournalRelatedPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jabref.gui.cleanup</a>
+</div>
+
+<h1>Coverage Summary for Class: CleanupJournalRelatedPanel (org.jabref.gui.cleanup)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CleanupJournalRelatedPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.jabref.gui.cleanup;
+&nbsp;
+&nbsp;import java.util.EnumSet;
+&nbsp;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.control.Label;
+&nbsp;import javafx.scene.control.RadioButton;
+&nbsp;import javafx.scene.control.ToggleGroup;
+&nbsp;import javafx.scene.layout.VBox;
+&nbsp;
+&nbsp;import org.jabref.logic.cleanup.CleanupPreferences;
+&nbsp;import org.jabref.logic.cleanup.CleanupTabSelection;
+&nbsp;import org.jabref.logic.l10n.Localization;
+&nbsp;
+&nbsp;import com.airhacks.afterburner.views.ViewLoader;
+&nbsp;import org.jspecify.annotations.NonNull;
+&nbsp;
+&nbsp;public class CleanupJournalRelatedPanel extends VBox implements CleanupPanel {
+&nbsp;    @FXML public Label cleanupJournalAbbreviationsLabel;
+&nbsp;    @FXML private ToggleGroup journalAbbreviationsToggleGroup;
+&nbsp;
+&nbsp;    @FXML private RadioButton abbreviateDefault;
+&nbsp;    @FXML private RadioButton abbreviateDottles;
+&nbsp;    @FXML private RadioButton abbreviateShortestUnique;
+&nbsp;    @FXML private RadioButton abbreviateLTWA;
+&nbsp;    @FXML private RadioButton unabbreviate;
+&nbsp;
+&nbsp;    private final CleanupJournalRelatedViewModel viewModel;
+&nbsp;    private final CleanupDialogViewModel dialogViewModel;
+&nbsp;
+&nbsp;    public CleanupJournalRelatedPanel(@NonNull CleanupPreferences cleanupPreferences,
+<b class="nc">&nbsp;                                      @NonNull CleanupDialogViewModel dialogViewModel) {</b>
+<b class="nc">&nbsp;        this.dialogViewModel = dialogViewModel;</b>
+<b class="nc">&nbsp;        this.viewModel = new CleanupJournalRelatedViewModel(cleanupPreferences);</b>
+&nbsp;
+<b class="nc">&nbsp;        ViewLoader.view(this)</b>
+<b class="nc">&nbsp;                  .root(this)</b>
+<b class="nc">&nbsp;                  .load();</b>
+&nbsp;
+<b class="nc">&nbsp;        initialize();</b>
+<b class="nc">&nbsp;        bindProperties();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void initialize() {
+<b class="nc">&nbsp;        cleanupJournalAbbreviationsLabel.setText(Localization.lang(&quot;Manage journal abbreviations&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        abbreviateDefault.setText(Localization.lang(&quot;Abbreviate (default)&quot;));</b>
+<b class="nc">&nbsp;        abbreviateDefault.setUserData(CleanupPreferences.CleanupStep.ABBREVIATE_DEFAULT);</b>
+&nbsp;
+<b class="nc">&nbsp;        abbreviateDottles.setText(Localization.lang(&quot;Abbreviate (dotless)&quot;));</b>
+<b class="nc">&nbsp;        abbreviateDottles.setUserData(CleanupPreferences.CleanupStep.ABBREVIATE_DOTLESS);</b>
+&nbsp;
+<b class="nc">&nbsp;        abbreviateShortestUnique.setText(Localization.lang(&quot;Abbreviate (shortest unique)&quot;));</b>
+<b class="nc">&nbsp;        abbreviateShortestUnique.setUserData(CleanupPreferences.CleanupStep.ABBREVIATE_SHORTEST_UNIQUE);</b>
+&nbsp;
+<b class="nc">&nbsp;        abbreviateLTWA.setText(Localization.lang(&quot;Abbreviate (LTWA)&quot;));</b>
+<b class="nc">&nbsp;        abbreviateLTWA.setUserData(CleanupPreferences.CleanupStep.ABBREVIATE_LTWA);</b>
+&nbsp;
+<b class="nc">&nbsp;        unabbreviate.setText(Localization.lang(&quot;Unabbreviate&quot;));</b>
+<b class="nc">&nbsp;        unabbreviate.setUserData(CleanupPreferences.CleanupStep.UNABBREVIATE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void bindProperties() {
+<b class="nc">&nbsp;        journalAbbreviationsToggleGroup.selectToggle(</b>
+<b class="nc">&nbsp;                journalAbbreviationsToggleGroup.getToggles().stream()</b>
+<b class="nc">&nbsp;                                               .filter(toggle -&gt; toggle.getUserData().equals(viewModel.selectedJournalCleanupOption.get()))</b>
+<b class="nc">&nbsp;                                               .findFirst().orElse(null));</b>
+<b class="nc">&nbsp;        journalAbbreviationsToggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -&gt; {</b>
+<b class="nc">&nbsp;            if (newToggle != null) {</b>
+<b class="nc">&nbsp;                CleanupPreferences.CleanupStep step = (CleanupPreferences.CleanupStep) newToggle.getUserData();</b>
+<b class="nc">&nbsp;                viewModel.selectedJournalCleanupOption.set(step);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public CleanupTabSelection getSelectedTab() {
+<b class="nc">&nbsp;        EnumSet&lt;CleanupPreferences.CleanupStep&gt; selectedMethods = EnumSet.noneOf(CleanupPreferences.CleanupStep.class);</b>
+&nbsp;
+<b class="nc">&nbsp;        CleanupPreferences.CleanupStep selected = viewModel.selectedJournalCleanupOption.get();</b>
+<b class="nc">&nbsp;        selectedMethods.add(selected);</b>
+&nbsp;
+<b class="nc">&nbsp;        return CleanupTabSelection.ofJobs(CleanupJournalRelatedViewModel.CLEANUP_JOURNAL_METHODS, selectedMethods);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-01 18:18</div>
+</div>
+</body>
+</html>
