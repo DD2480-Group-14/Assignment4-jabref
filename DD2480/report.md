@@ -90,8 +90,10 @@ Optional (point 2): relation to design pattern(s).
 
 What are your main take-aways from this project? What did you learn?
 
-How did you grow as a team, using the Essence standard to evaluate yourself?
-
 Optional (point 6): How would you put your work in context with best software engineering practice?
 
 Optional (point 7): Is there something special you want to mention here?
+
+### Essence
+
+We would argue that we are now in the `performing` stage where we work effectively and efficiently, if we had more time we could probably become even more effecient. We can also see that with this assignment we are moving into the `adjourned` stage since this our final assignment.
