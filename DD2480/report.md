@@ -56,6 +56,10 @@ Scope (functionality and code affected).
 
 Optional (point 3): trace tests to requirements.
 
+## Existing tests analysis
+
+There doesn't seem to be any tests related to the issue. The file `jabgui/src/main/java/org/jabref/gui/importer/BookCoverFetcher.java`, which is used to fetch book covers, is not covered at all by any tests.
+
 ## Code changes
 
 ### Patch
