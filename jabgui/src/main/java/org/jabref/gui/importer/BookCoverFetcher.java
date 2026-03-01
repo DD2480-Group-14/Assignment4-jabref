@@ -9,6 +9,8 @@ import java.nio.file.attribute.FileTime;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.jabref.gui.externalfiletype.CustomExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileType;
@@ -38,8 +40,9 @@ public class BookCoverFetcher {
     private static final String URL_FETCHER_URL = "https://bookcover.longitood.com/bookcover/";
     private static final String IMAGE_FALLBACK_URL = "https://covers.openlibrary.org/b/isbn/";
     private static final String IMAGE_FALLBACK_SUFFIX = "-L.jpg";
+    private static final Integer IMAGE_DOWNLOAD_COOLDOWN_HOURS = 24;
 
-    private static final CustomExternalFileType NOT_AVAILABLE_FILE_TYPE = CustomExternalFileType("", "not-available", "", "", "", IconTheme.JabRefIcons.FILE);
+    private static final CustomExternalFileType NOT_AVAILABLE_FILE_TYPE = new CustomExternalFileType("", "not-available", "", "", "", IconTheme.JabRefIcons.FILE);
 
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
 
@@ -58,9 +61,33 @@ public class BookCoverFetcher {
     private void downloadCoverForISBN(ISBN isbn, Path directory) {
         final String name = "isbn-" + isbn.asString();
         if (findExistingImage(name, directory).isEmpty()) {
+            Optional<Duration> timeSincePreviousAttempt = timeSincePreviousAttempt(name, directory);
+            if (!timeSincePreviousAttempt.isEmpty() && timeSincePreviousAttempt.get().toHours() < IMAGE_DOWNLOAD_COOLDOWN_HOURS) {
+                LOGGER.info("Skipped download attempt for {}, attempted less than 24 hours ago", name);
+                return;
+            }
             final String url = getImageUrl(isbn);
             downloadCoverImage(url, name, directory);
         }
+    }
+
+    private Optional<Duration> timeSincePreviousAttempt(String name, Path directory) {
+        Optional<Path> notAvailablePathOptional = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
+        if (notAvailablePathOptional.isEmpty()) {
+            LOGGER.warn("Could not find not available file path for: {}", name);
+            return Optional.empty();
+        }
+        Path notAvailablePath = notAvailablePathOptional.get();
+        if (Files.exists(notAvailablePath)) {
+            try {
+                FileTime lastModifiedTimeStamp = Files.getLastModifiedTime(notAvailablePath);
+                Duration timeSinceLastModification = Duration.between(lastModifiedTimeStamp.toInstant(), Instant.now());
+                return Optional.of(timeSinceLastModification);
+            } catch (IOException e) {
+                LOGGER.warn("Could not read last modified time", e);
+            }
+        }
+        return Optional.empty();
     }
 
     private void downloadCoverImage(String url, final String name, final Path directory) {
