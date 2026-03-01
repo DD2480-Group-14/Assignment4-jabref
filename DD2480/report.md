@@ -70,9 +70,39 @@ Optional (point 4): the patch is clean.
 Optional (point 5): considered for acceptance (passes all automated checks).
 
 ## Test results
+### Before implementation
+#### Test report
+The initial test execution for the jabgui module was performed using 
+`./gradlew :jabgui:test: --info`.
 
-Overall results with link to a copy or excerpt of the logs (before/after
-refactoring).
+Out of 770 executed tests, 5 tests failed, and 9 tests were skipped.
+
+Identified Failures:
+- `KeyBindingsTabModelTest.randomNewKeyKeyBindingInRepository()`
+- `PushToTeXworksTest.pushEntries()`
+- `GlobalSearchBarTest.recordingSearchQueriesOnFocusLostOnly(FxRobot)`
+- `GlobalSearchBarTest.emptyQueryIsNotRecorded(FxRobot)`
+- `ThemeManagerTest.liveReloadCssDataUrl()`
+
+The failing tests seem to be unrelated to the book cover download functionality. They are therefore not expected to interfere with the implementation of the new cover retrieval feature.
+
+Full test log is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/reports/test-before/test-log.txt).
+
+#### Coverage report
+Even though the test execution was limited to the `jabgui` module, the coverage report includes metrics for the entire project.
+
+| Metric | Coverage % | Raw numbers   |
+| ------ | ---------- | ------------- |
+| Class  | 25,9%      | (609/2350)    |
+| Method | 15,7%      | (2675/17000)  |
+| Branch | 9,8%       | (3783/38451)  |
+| Line   | 14,1%      | (10997/77950) |
+
+Full coverage report in HTML is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/coverage-before/index.html).
+
+### After implementation
+#### Test report
+#### Coverage report
 
 ## UML class diagram and its description
 
