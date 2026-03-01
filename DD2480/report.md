@@ -52,9 +52,14 @@ Summary in one or two sentences
 
 Scope (functionality and code affected).
 
-## Requirements for the new feature or requirements affected by functionality being refactored
+## Requirements
 
-Optional (point 3): trace tests to requirements.
+| ID   | Title                    | Description                                                                                                                                                      |
+| ---- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RE01 | Automatic retrieval      | When a book is opened and no local image file exists for that book, the system should trigger an online search and download of the cover.                        |
+| RE02 | Availability flagging    | If a book cover is not available for download, the system should create a file with the ISBN of the book and extension .not-available to document unavailabilty. |
+| RE03 | 24-hour check constraint | If a previous attempt of downloading a cover has failed, the system should not try another attempt for the same book within 24-hour time window.                 |
+| RE04 | Background processing    | The downloading process should be a background activity, and should not interfere with or delay user interface when a book is opened.                            |
 
 ## Code changes
 
