@@ -6,11 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.time.Duration;
-import java.time.Instant;
 
 import org.jabref.gui.externalfiletype.CustomExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileType;
@@ -118,6 +118,7 @@ public class BookCoverFetcher {
 
         Optional<Path> destination = resolveNameWithType(directory, name, inferredFileType);
         if (destination.isEmpty()) {
+            LOGGER.warn("Skipping cover download: Could not resolve valid path for name {}", name);
             return;
         }
         try {
@@ -125,6 +126,7 @@ public class BookCoverFetcher {
             deleteNotAvailableFileIfExists(name, directory);
         } catch (FetcherClientException | FetcherServerException e) {
             LOGGER.info("Remote book cover does not exist or server returned an error for URL: {}", url);
+            LOGGER.info("Flagging book cover as not available");
             flagAsNotAvailable(name, directory);
         } catch (FetcherException e) {
             LOGGER.error("Error while downloading or saving cover image file", e);
@@ -134,6 +136,7 @@ public class BookCoverFetcher {
     private void flagAsNotAvailable(final String name, final Path directory) {
         Optional<Path> destination = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
         if (destination.isEmpty()) {
+            LOGGER.warn("Skipping flagging as not available: Could not resolve valid path for name {}", name);
             return;
         }
         if (Files.exists(destination.get())) {
