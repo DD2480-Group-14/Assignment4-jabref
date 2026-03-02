@@ -32,7 +32,7 @@ import static org.mockito.Mockito.doThrow;
 public class BookCoverFetcherTest {
 
     /**
-     * Test for requirement RE03
+     * Test the cooldown for trying to download a bookcover
      *
      * Asserts that the system does not try to download
      * a book cover again if timeSincePrevious returns
@@ -53,9 +53,9 @@ public class BookCoverFetcherTest {
 
         verify(fetcher, times(1)).downloadCoverImage(any(), any(), any());
     }
-  
+
     /**
-     * Test for requirement RE02
+     * Test creation of a not-available file
      *
      * Should create a new file with the extension
      * ".not-available" if a book cover is not available.
