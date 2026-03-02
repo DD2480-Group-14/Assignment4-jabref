@@ -67,13 +67,7 @@ We therefore created some tests that should fail before implementing functionali
 
 ### Patch
 
-(copy your changes or the add git command to show them)
-
-git diff ...
-
-Optional (point 4): the patch is clean.
-
-Optional (point 5): considered for acceptance (passes all automated checks).
+Link to main PR to JabRef: https://github.com/JabRef/jabref/pull/15250
 
 ## Test results
 ### Before implementation
