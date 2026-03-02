@@ -35,7 +35,7 @@ class BookCoverFetcherTest {
     /// a book cover again if timeSincePrevious returns
     /// a time in hours < 24
     @Test
-     void checkBookCoverFetchCooldown(@TempDir Path path) {
+    void checkBookCoverFetchCooldown(@TempDir Path path) {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
 
@@ -59,7 +59,7 @@ class BookCoverFetcherTest {
     /// "toFile". This should then cause the expected file to
     /// be created.
     @Test
-     void flagAsAvailableTest(@TempDir Path path) throws Exception {
+    void flagAsAvailableTest(@TempDir Path path) throws Exception {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
         String name = "testCover";
@@ -81,7 +81,7 @@ class BookCoverFetcherTest {
     /// an empty Optional when there is a ".not-available"
     /// file for the requested image
     @Test
-     void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
+    void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class, RETURNS_DEEP_STUBS);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
         String name = "testCover";
