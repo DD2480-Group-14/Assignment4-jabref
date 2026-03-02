@@ -11,6 +11,7 @@ import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.model.entry.identifier.ISBN;
 import org.jabref.model.http.SimpleHttpResponse;
+import org.jabref.gui.externalfiletype.ExternalFileType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 public class BookCoverFetcherTest {
 
@@ -72,5 +74,26 @@ public class BookCoverFetcherTest {
         assertFalse(Files.exists(destination));
         fetcher.downloadCoverHelper(download, destination, path, name, urlString);
         assertTrue(Files.exists(destination));
+    }
+
+    /// Test findExistingImage
+    ///
+    /// The function "findExistingImage" should return
+    /// an empty Optional when there is a ".not-available"
+    /// file for the requested image
+    @Test
+    public void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
+        ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class, RETURNS_DEEP_STUBS);
+        BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
+        String name = "testCover";
+
+        Path destination = path.resolve(name + ".not-available");
+        Files.createFile(destination);
+
+        assertTrue(Files.exists(destination));
+
+        Optional<Path> result = fetcher.findExistingImage(name, path);
+
+        assertTrue(result.isEmpty());
     }
 }
