@@ -65,7 +65,7 @@ public class BookCoverFetcherTest {
      * be created.
      */
     @Test
-    public void flagTest(@TempDir Path path) throws Exception{
+    public void flagAsAvailableTest(@TempDir Path path) throws Exception{
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
         String name = "testCover";
