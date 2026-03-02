@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
-public class BookCoverFetcherTest {
+class BookCoverFetcherTest {
 
     /// Test the cooldown for trying to download a bookcover
     ///
@@ -36,7 +36,7 @@ public class BookCoverFetcherTest {
     /// a book cover again if timeSincePrevious returns
     /// a time in hours < 24
     @Test
-    public void checkBookCoverFetchCooldown(@TempDir Path path) {
+     void checkBookCoverFetchCooldown(@TempDir Path path) {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
 
@@ -60,7 +60,7 @@ public class BookCoverFetcherTest {
     /// "toFile". This should then cause the expected file to
     /// be created.
     @Test
-    public void flagAsAvailableTest(@TempDir Path path) throws Exception {
+     void flagAsAvailableTest(@TempDir Path path) throws Exception {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
         String name = "testCover";
@@ -82,7 +82,7 @@ public class BookCoverFetcherTest {
     /// an empty Optional when there is a ".not-available"
     /// file for the requested image
     @Test
-    public void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
+     void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
         ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class, RETURNS_DEEP_STUBS);
         BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
         String name = "testCover";
