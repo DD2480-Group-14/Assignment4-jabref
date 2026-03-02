@@ -1,5 +1,6 @@
 # Onboarding Documentation
 
+
 ## Project
 JabRef — open-source reference manager  
 Repository: https://github.com/DD2480-Group-14/Assignment4-jabref  
