@@ -1,33 +1,23 @@
 package org.jabref.gui.importer;
 
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.time.Duration;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.jabref.gui.importer.BookCoverFetcher;
-import org.jabref.model.entry.identifier.ISBN;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
-import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.importer.FetcherClientException;
+import org.jabref.logic.net.URLDownload;
 import org.jabref.model.http.SimpleHttpResponse;
 
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.io.TempDir;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 public class BookCoverFetcherTest {
 
