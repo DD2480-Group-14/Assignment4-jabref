@@ -3,11 +3,14 @@ package org.jabref.gui.importer;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
+import java.time.Duration;
 
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
 import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.model.http.SimpleHttpResponse;
+import org.jabref.model.entry.identifier.ISBN;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,6 +21,10 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class BookCoverFetcherTest {
 
