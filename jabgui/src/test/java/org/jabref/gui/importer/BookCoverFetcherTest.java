@@ -120,4 +120,21 @@ public class BookCoverFetcherTest {
         Path path = optionalPath.get();
         assertEquals(path, filePath);
     }
+
+    /// Tests retrieval of downloaded book cover when there is .not-available file present
+    ///
+    /// We create a new .not-available file in the cover directory.
+    /// When we try to get the book cover with the same isbn we should not get anything
+    /// since it is not a real image.
+    @Test
+    void getNoCoverWhenNotAvailableFilePresent() throws IOException {
+        String isbn = "9780141036144";
+        BibEntry entry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, isbn);
+        String fileName = "isbn-" + isbn + ".not-available";
+        Path filePath = Directories.getCoverDirectory().resolve(fileName);
+        Files.createFile(filePath);
+
+        Optional<Path> optionalPath = bookCoverFetcher.getDownloadedCoverForEntry(entry);
+        assertTrue(optionalPath.isEmpty());
+    }
 }
