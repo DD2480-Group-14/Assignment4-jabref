@@ -11,7 +11,6 @@ import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.model.entry.identifier.ISBN;
 import org.jabref.model.http.SimpleHttpResponse;
-import org.jabref.gui.externalfiletype.ExternalFileType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
