@@ -48,6 +48,33 @@ During this assignment, Melker made the following contributions:
 3. Wrote a few tests
 4. Reviewed around 50% of other team members PRs
 
+### Edwin Nordås Jogensjö
+
+Time spent by Edwin:
+
+1. plenary discussions/meetings: 2 hours
+
+2. discussions within parts of the group: -
+
+3. reading documentation: 4 hours
+
+4. configuration and setup: 2-3 hours
+
+    I had many problems with getting the language server and LSP to work with this project. Also, some gui tests didn't work on my PC because of screen sharing problems.
+
+5. analyzing code/output: 5 hours
+
+6. writing documentation: 1 hour
+
+7. writing code: 4 hours
+
+8. running code: 2 hours
+
+Statement of contribution (Edwin):
+1. Identified tests that were missing and implemented some of them.
+2. Changed/refactored relevant files that made the code possible to test and mock.
+3. Cleared up the usage of `destination.get()` according to suggestions from a contributor.
+
 For each team member, how much time was spent in
 
 1. plenary discussions/meetings;
