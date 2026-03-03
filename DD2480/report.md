@@ -27,18 +27,21 @@ Below is a diagram showing the main architecture. Red arrows show which dependen
 ![diagram.png](diagram.png)
 ## Onboarding experience
 
-Did you choose a new project or continue on the previous one?
+**Did you choose a new project or continue on the previous one?**
+
 We chose a new project as we could not run the test cases properly in Assignment 3.
 
-If you changed the project, how did your experience differ from before?
+**If you changed the project, how did your experience differ from before?**
+
 The onboarding was faster as there was better documentation for https://github.com/JabRef/jabref.
 
-How was the onboarding experience?
+**How was the onboarding experience?**
+
 The project could be built by cloning the repo and following the instructions in the main project's README.md. The required tools to build the project is JabRef, Java 25 or later, and gradle 9.1 or later. However, gradle was not necessary to install since you could build using ./gradlew test.
 
 The build sometimes conclude with errors in the tests, and several tests are ignored or skipped. Otherwise, building the project with ./gradlew build -x test succeeds.
 
-One of the test, KeyBindingViewModelTest.verifyStoreSettingsWritesChanges(), had AssertionFailedError when project was run. But it has no relationship with BookCoverFetcher or PreviewViewer.
+One of the test, `KeyBindingViewModelTest.verifyStoreSettingsWritesChanges()`, had AssertionFailedError when project was run. But it has no relationship with BookCoverFetcher or PreviewViewer.
 
 ## Effort spent and contributions
 
@@ -286,19 +289,7 @@ Even though the test execution was limited to the `jabgui` module, the coverage 
 
 The diagram shows 8 classes that are involved in the resolved issue. `PreviewViewer` initiates the download process depending on the `GuiPreferences` -> `PreviewPreferences`. If it should attempt download then it uses the `BookCoverFetcher` to do so and starts this as a `BackgroundTask`, as specified in the requirements. `BookCoverFetcher` is where the majority of our changes are located. The (already existing) download logic extracts the `ISBN` from `BibEntry` to identifiy the book and download the cover. Our implementation creates a `CustomExternalFileType` `".not-available"` for missing book covers, we then check the "last modified" timestamp of that file, if it was more than 24 hours, we can attempt to download again.
 
-### Key changes/classes affected
-
-Optional (point 1): Architectural overview.
-
-Optional (point 2): relation to design pattern(s).
-
 ## Overall experience
-
-What are your main take-aways from this project? What did you learn?
-
-Optional (point 6): How would you put your work in context with best software engineering practice?
-
-Optional (point 7): Is there something special you want to mention here?
 
 ### Progress of the Team
 
