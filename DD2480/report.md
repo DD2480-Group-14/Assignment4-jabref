@@ -275,6 +275,7 @@ Even though the test execution was limited to the `jabgui` module, the coverage 
 | Branch | 9,8%                | (3783/38451)         | 10,1%              | (3906/38863)        |
 | Line   | 14,1%               | 10997/77950)         | 14,2%              | (11080/77998)       |
 
+
 - The increased class coverage from 609 to 611 confirms that `BookCoverFetcher` and associated helper classes are integrated in the test suite. 
 - 21 additional methods were covered and implemented to satisfy our identified requirements.
 - Branch coverage increased from 9,8% to 10,1% showing that the tests verifies logic paths.
@@ -282,6 +283,21 @@ Even though the test execution was limited to the `jabgui` module, the coverage 
 *Coverage report in HTML before implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-before/index.html).*
 
 *Coverage report in HTML after implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-after/index.html).*
+
+### Description of system (criteria 1 P+)
+
+![](./diagrams/uml.drawio.svg)
+
+#### Existing download logic
+Previously, the system would try to download a book cover every time an entry with ISBN was viewed, given that the feature was enabled. If so, it would first try to query `bookcover.longitood.com` and fall back to `covers.openlibrary.org`. However, if both fails nothing would happen, resulting in that it would attempt to download the cover again if entry was viewed again.
+
+The previous architecture can be explained by the flowchart below (as described [here](https://github.com/JabRef/jabref/pull/14777)):
+![Flowchart](./diagrams/diagram_before.drawio.svg)
+#### Download logic after our changes
+Our suggested updated architecture introduces a check before even attempting to download, it checks if any previous attempts has been made. If there is any previous attempt, it check whether the last attempt was made more than 24 hours ago, then it attempts to download. If there is no previous attempt, it will also try to download. Another change in the architecture is that after a download attempt has failed we flag the cover as not available by creating a file for the cover with the .not-availabe file extension. 
+
+The new architecture can be explained by the flowchart below:
+![Flowchart](./diagrams/diagram_after.drawio.svg)
 
 ## UML class diagram and its description
 

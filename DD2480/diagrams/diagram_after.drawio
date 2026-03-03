@@ -1,0 +1,130 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.6.0">
+  <diagram name="Page-1" id="vKGFKT2hX-QHJi-iFmFE">
+    <mxGraphModel dx="2443" dy="2289" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="MeZkDnFrwr06X1Lo-Nv1-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Entry with ISBN" vertex="1">
+          <mxGeometry height="80" width="120" x="-90" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="User Preference" vertex="1">
+          <mxGeometry height="80" width="120" x="-90" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-4" edge="1" parent="1" source="MeZkDnFrwr06X1Lo-Nv1-1" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-22" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="130" as="sourcePoint" />
+            <mxPoint x="120" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-5" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-4" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="BookCoverFetcher" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-6" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-1" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-22" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="380" as="sourcePoint" />
+            <mxPoint x="50" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-7" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-6" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="ShouldDownloadCovers" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;from&lt;/div&gt;&lt;div&gt;bookcover.longitood.com&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="665" y="-75" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-12" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-24" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-10" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="755.7649787956366" y="235.23868208350768" as="sourcePoint" />
+            <mxPoint x="860" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-13" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-24" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-14" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="755.7649787956366" y="264.7613179164921" as="sourcePoint" />
+            <mxPoint x="933.5840490026235" y="306.38235665580567" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;fallback to&lt;/div&gt;&lt;div&gt;covers.openlibrary.org&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="665" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Cover File" vertex="1">
+          <mxGeometry height="80" width="120" x="910" y="-25" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-16" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-10" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-15" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1015" y="-45" as="sourcePoint" />
+            <mxPoint x="1065" y="-95" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-17" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-14" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-15" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1125" y="205" as="sourcePoint" />
+            <mxPoint x="1175" y="155" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-19" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-15" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-21" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1380" y="35" as="sourcePoint" />
+            <mxPoint x="1565" y="-45.44999999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-20" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-19" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="PreviewViewer" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-21" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Display in&amp;nbsp;&lt;/div&gt;&lt;div&gt;Preview&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="120" x="1140" y="-25" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-22" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Check&amp;nbsp;&lt;/div&gt;&lt;div&gt;Cooldown&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="120" x="160" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Skip Download" vertex="1">
+          <mxGeometry height="80" width="120" x="450" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-24" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Attempt Download&lt;/div&gt;Cover Image" vertex="1">
+          <mxGeometry height="80" width="120" x="440" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-26" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-22" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-23" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="100" as="sourcePoint" />
+            <mxPoint x="280" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-27" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-26" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="timeSincePreviousAttempt &amp;lt; 24&amp;nbsp;" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-28" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-22" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-24" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="80" as="sourcePoint" />
+            <mxPoint x="320" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-29" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-28" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="timeSincePreviousAttempt.isEmpty() ||&amp;nbsp;timeSincePreviousAttempt &amp;gt; 24" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-30" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Flag that download&lt;/div&gt;&lt;div&gt;failed&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="120" x="910" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-31" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-14" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="Qin4ImYNwAETgiMjKHpH-30" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="940" y="94.48000000000002" as="sourcePoint" />
+            <mxPoint x="1102.1141707257443" y="65.00469623168291" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-32" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-31" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="flagAsNotAvailable" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-35" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Open Entry" vertex="1">
+          <mxGeometry height="80" width="120" x="-340" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-36" edge="1" parent="1" source="Qin4ImYNwAETgiMjKHpH-35" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" target="MeZkDnFrwr06X1Lo-Nv1-1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-170" y="60" as="sourcePoint" />
+            <mxPoint x="-70" y="60" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qin4ImYNwAETgiMjKHpH-37" connectable="0" parent="Qin4ImYNwAETgiMjKHpH-36" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" value="PreviewFetcher" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
