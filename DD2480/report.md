@@ -75,6 +75,32 @@ Statement of contribution (Edwin):
 2. Changed/refactored relevant files that made the code possible to test and mock.
 3. Cleared up the usage of `destination.get()` according to suggestions from a contributor.
 
+### Vidar Nykvist
+
+Time spent by Vidar:
+
+1. plenary discussions/meetings: 2 hours
+
+2. discussions within parts of the group: 1
+
+3. reading documentation: 2 hours
+
+4. configuration and setup: 8 hours
+I had extremely many dependency errors when trying to get this to work on NixOS, I also had problem with that executing some of the tests required Java Amazon Corretto25 which was only available in the unstable branch, however when I looked at the jabref flake in nix-packages they remove this requirement which I eventually also did. I eventually solved this entire problem by creating a nix-shell and iteratively adding each missing dependency. I also had problems with getting the LSP working for this project which I decided to skip after a while. I also spent some time attempting to compile and run tests on the KTH:s SSH server but quickly gave up since it does not have a access to a gui.
+
+5. analyzing code/output: 3 hours
+
+6. writing documentation: 5 hour
+
+7. writing code: 3 hours
+
+8. running code: 2 hours
+
+Statement of contribution (Vidar):
+1. Implemented logic for checking if 24 hours had passed (after .not-available functionality was in place)
+2. Created UML Class diagram and description.
+3. Created flowcharts and description of architecture of our implementation. 
+
 For each team member, how much time was spent in
 
 1. plenary discussions/meetings;
