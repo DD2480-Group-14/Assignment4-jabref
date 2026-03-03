@@ -46,7 +46,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BookCoverFetcherTest {
+class BookCoverFetcherTest {
     private final ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
     private BookCoverFetcher bookCoverFetcher;
     private MockedStatic<Directories> mockedDirectories;
@@ -81,7 +81,7 @@ public class BookCoverFetcherTest {
     /// a book cover again if timeSincePrevious returns
     /// a time in hours < 24
     @Test
-    public void checkBookCoverFetchCooldown() {
+    void checkBookCoverFetchCooldown() {
         ISBN isbn = new ISBN("123");
 
         doReturn(Optional.empty()).when(bookCoverFetcher).findExistingImage(any(), any());
@@ -102,7 +102,7 @@ public class BookCoverFetcherTest {
     /// "toFile". This should then cause the expected file to
     /// be created.
     @Test
-    public void flagAsAvailableTest() throws Exception {
+    void flagAsAvailableTest() throws Exception {
         String name = "testCover";
         String urlString = "https://example.com/thisisabookcoverthatdoesntexist.jpg";
 
@@ -114,6 +114,22 @@ public class BookCoverFetcherTest {
         assertFalse(Files.exists(destination));
         bookCoverFetcher.downloadCoverHelper(download, destination, Directories.getCoverDirectory(), name, urlString);
         assertTrue(Files.exists(destination));
+    }
+
+    /// Test retrieval of downloaded book cover when there is no such file in
+    /// the directory.
+    ///
+    /// We create an entry of a new book cover, but we don't create a file
+    /// that corresponds to that entry, neither a ".not-available" file.
+    /// When we try to get the book cover, we should not get anything since
+    /// there is not such file in the directory.
+    @Test
+    void getNoCoverWhenDirectoryIsEmpty() throws IOException {
+        String isbn = "9780141036144";
+        BibEntry entry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, isbn);
+
+        Optional<Path> optionalPath = bookCoverFetcher.getDownloadedCoverForEntry(entry);
+        assertTrue(optionalPath.isEmpty());
     }
 
     /// Tests retrieval of downloaded book cover
