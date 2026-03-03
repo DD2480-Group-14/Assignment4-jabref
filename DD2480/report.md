@@ -146,7 +146,18 @@ Scope (functionality and code affected).
 
 There doesn't seem to be any tests related to the issue. The file `jabgui/src/main/java/org/jabref/gui/importer/BookCoverFetcher.java`, which is used to fetch book covers, is not covered at all by any tests.
 
-We therefore created some tests that should fail before implementing functionality for the requirements. See `jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java` in the main branch.
+We therefore created some tests that should fail before implementing functionality for the requirements. The tests are written in the file `jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java` on the main branch. Below shows what tests are related to which requirement:
+
+### RE02 - Availability flagging
+    - `createNotAvailableFileAfterFailedDownload` - tests thata ".not-available" file is created after a failed download.
+    - `getNoCoverWhenNotAvailableFileIsPresent` - checks that we don't get any cover if the ".not-available" file is present.
+    - `notAvailableFileIsDeletedAfterSuccessfulDownload` - checks that the ".not-available" file is deleted when the cover is successfully downloaded.
+
+### RE03 - 24-hour check constraint
+    - `checkBookCoverFetchCooldown` - Checks that the system does not try to download a book cover again when it just tried and failed.
+    - `modificationTimeChangesWhenMoreThan24Hours` - Asserts that the modification time is updated when a download is attempted after more than 24 hours since last time.
+    - `modificationTimeDoesNotChangeWhenLessThan24Hours` - Asserts that the modification time is not updated when the system tried to download less than 24 hours ago.
+
 
 ## Code changes
 
