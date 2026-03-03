@@ -6,13 +6,42 @@
 
 **URL:** https://github.com/JabRef/jabref
 
-JabRef is a free open source reference management tool, specifically used for BibTeX and LaTeX format. It helps users collect, organize and search for bibliographic data. 
+JabRef is a free open source reference management tool, specifically used for BibTeX and LaTeX format. It helps users collect, organize and search for bibliographic data.
 
+### JabRef purpose (P+ criteria 1)
+
+JabRef is designed to streamline the academic workflow by being a management tool for references. Some of the core features of JabRef are: 
+
+- Automatic retrieval of bibliographic data from online sources such as arXiv or CrossRef. Automatic retrieval can be done by using unique identifiers like DOIs or ISBNs.
+- Organize entries by using _collections_. Collections allow users to group entries based on for example keywords. This allows users to more easily find what they are looking for.
+- **Citing.** JabRef allows users to conveniently cite entries as they write. JabRef supports many common writing tools as LaTeX, Word, LibreOffice, and many more.
+
+### High-Level Architecture of JabRef (P+ criteria 1)
+- At the center of JabRef we have the `model` which contains the most important stuff. It contains the main database and entries.
+- Then we have the `logic` package which is responsible for manipulating the `model`.
+- Interfaces. There is both and GUI and CLI. The GUI is the main way to use JabRef and is built using JavaFX. The Interfaces can use the `logic` package to modify the `model`.
+- Since a lot of other packages need to update when something occurs in the `model`, we need a way to update other parts of the system. JabRef uses a layered architecture which means that `model` should not depend on any other packages. JabRef solves this issue by using an event bus: when the `model` changes, events are triggered which the other packages can see and respond to.
+
+Below is a diagram showing the main architecture. Red arrows show which dependencies are allowed. Green arrows shows how information travels via the event bus.
+
+![diagram.png](diagram.png)
 ## Onboarding experience
 
-Did you choose a new project or continue on the previous one?
+**Did you choose a new project or continue on the previous one?**
 
-If you changed the project, how did your experience differ from before?
+We chose a new project as we could not run the test cases properly in Assignment 3.
+
+**If you changed the project, how did your experience differ from before?**
+
+The onboarding was faster as there was better documentation for https://github.com/JabRef/jabref.
+
+**How was the onboarding experience?**
+
+The project could be built by cloning the repo and following the instructions in the main project's README.md. The required tools to build the project is JabRef, Java 25 or later, and gradle 9.1 or later. However, gradle was not necessary to install since you could build using ./gradlew test.
+
+The build sometimes conclude with errors in the tests, and several tests are ignored or skipped. Otherwise, building the project with ./gradlew build -x test succeeds.
+
+One of the test, `KeyBindingViewModelTest.verifyStoreSettingsWritesChanges()`, had AssertionFailedError when project was run. But it has no relationship with BookCoverFetcher or PreviewViewer.
 
 ## Effort spent and contributions
 
@@ -47,38 +76,125 @@ During this assignment, Melker made the following contributions:
 2. Created the logic for creating and updating .not-available files
 3. Wrote a few tests
 4. Reviewed around 50% of other team members PRs
+### Clarabelle
+Following is a list of how Clarabelle spent his time:
+
+1. plenary discussions/meetings (2 hours);
+
+2. discussions within parts of the group (2 hours);
+
+3. reading documentation (2 hours);
+
+4. configuration and setup (4 hours);
+I had to download jabref, IntelliJ IDEA. My laptop took a while to download the apps as it crashed multiple times.
+
+5. analyzing code/output (3 hours);
+The initial tests cases ran for 30 minutes each time.
+
+6. writing documentation (4 hours)
+
+7. writing code (0 hours);
+
+8. running code (3 hours)?
+
+During this assignment, Clarabelle made the following contributions:
+1. Wrote the onboarding document
+2. Checked how many initial tests failures
+
+### Edwin Nordås Jogensjö
+
+Time spent by Edwin:
+
+1. plenary discussions/meetings: 2 hours
+
+2. discussions within parts of the group: -
+
+3. reading documentation: 4 hours
+
+4. configuration and setup: 2-3 hours
+
+    I had many problems with getting the language server and LSP to work with this project. Also, some gui tests didn't work on my PC because of screen sharing problems.
+
+5. analyzing code/output: 5 hours
+
+6. writing documentation: 1 hour
+
+7. writing code: 4 hours
+
+8. running code: 2 hours
+
+Statement of contribution (Edwin):
+1. Identified tests that were missing and implemented some of them.
+2. Changed/refactored relevant files that made the code possible to test and mock.
+3. Cleared up the usage of `destination.get()` according to suggestions from a contributor.
+
+### Vidar Nykvist
+
+Time spent by Vidar:
+
+1. plenary discussions/meetings: 2 hours
+
+2. discussions within parts of the group: 1
+
+3. reading documentation: 2 hours
+
+4. configuration and setup: 8 hours
+I had extremely many dependency errors when trying to get this to work on NixOS, I also had problem with that executing some of the tests required Java Amazon Corretto25 which was only available in the unstable branch, however when I looked at the jabref flake in nix-packages they remove this requirement which I eventually also did. I eventually solved this entire problem by creating a nix-shell and iteratively adding each missing dependency. I also had problems with getting the LSP working for this project which I decided to skip after a while. I also spent some time attempting to compile and run tests on the KTH:s SSH server but quickly gave up since it does not have a access to a gui.
+
+5. analyzing code/output: 3 hours
+
+6. writing documentation: 5 hour
+
+7. writing code: 3 hours
+
+8. running code: 2 hours
+
+Statement of contribution (Vidar):
+1. Implemented logic for checking if 24 hours had passed (after .not-available functionality was in place)
+2. Created UML Class diagram and description.
+3. Created flowcharts and description of architecture of our implementation. 
 
 For each team member, how much time was spent in
 
-1. plenary discussions/meetings;
+### Maria Pettersson
+#### Time spent
+1. _Plenary discussions/meetings_; 2 hours.
 
-2. discussions within parts of the group;
+2. _Discussions within parts of the group_; 1 hour.
 
-3. reading documentation;
+3. _Reading documentation_; 2 hours.
 
-4. configuration and setup;
+4. _Configuration and setup_; 3 hours.
 
-5. analyzing code/output;
+    Setting up IntelliJ with the guidelines from JabRef's documentation took between 1- 2 hours. I ran into some issues when cloning the repo and building the project, resulting in having to redo the set up process.
 
-6. writing documentation;
+5. _Analyzing code/output_; 3 hours.
 
-7. writing code;
+6. _Writing documentation_; 5 hours.
 
-8. running code?
+7. _Writing code_; 0 hours.
 
-For setting up tools and libraries (step 4), enumerate all dependencies
-you took care of and where you spent your time, if that time exceeds
-30 minutes.
+8. _Running code_; 2 hours.
+
+#### Contribution
+
+- Identified and documented requirements RE01-RE04 for our chosen issue.
+- Documented our Way of Working and Project Description.
+- Executed and documented the regression tests and coverage before and after implementation of our feature.
 
 ## Overview of issue(s) and work done.
 
-Title:
+Title: Download book cover when entry editor is showing the book cover
 
-URL:
+URL: https://github.com/JabRef/jabref/issues/14848
 
-Summary in one or two sentences
+Summary in one or two sentences:
 
-Scope (functionality and code affected).
+Currently, a book cover image is only downloaded when a new entry is created. However, if the download fails, the system should try to download the cover again when the entry is opened and at least 24 hours have passed since the last try. This should be done as a background process in order to not affect the main program.
+
+Scope (functionality and code affected):
+
+The functionality affected by this issue is the visual representation of a book cover in the GUI, and also the downloading functionality in the background. This mainly affects the code that manages and downloads the cover. It also affects the code that displays book covers, which must check if there is a cover to display.
 
 ## Requirements
 
@@ -93,7 +209,25 @@ Scope (functionality and code affected).
 
 There doesn't seem to be any tests related to the issue. The file `jabgui/src/main/java/org/jabref/gui/importer/BookCoverFetcher.java`, which is used to fetch book covers, is not covered at all by any tests.
 
-We therefore created some tests that should fail before implementing functionality for the requirements. See `jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java` in the main branch.
+We therefore created some tests that should fail before implementing functionality for the requirements. The tests are written in the file `BookCoverFetcherTest.java` on the main branch, available through this link:
+
+https://github.com/DD2480-Group-14/Assignment4-jabref/blob/main/jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java. 
+
+Below shows what tests are related to which requirement:
+
+### RE02 - Availability flagging
+    - `createNotAvailableFileAfterFailedDownload` - tests that a ".not-available" file is created after a failed download.
+    - `getNoCoverWhenNotAvailableFileIsPresent` - checks that we don't get any cover if the ".not-available" file is present.
+    - `notAvailableFileIsDeletedAfterSuccessfulDownload` - checks that the ".not-available" file is deleted when the cover is successfully downloaded.
+
+### RE03 - 24-hour check constraint
+    - `checkBookCoverFetchCooldown` - Checks that the system does not try to download a book cover again when it just tried and failed.
+    - `modificationTimeChangesWhenMoreThan24Hours` - Asserts that the modification time is updated when a download is attempted after more than 24 hours since last time.
+    - `modificationTimeDoesNotChangeWhenLessThan24Hours` - Asserts that the modification time is not updated when the system tried to download less than 24 hours ago.
+
+### RE01 and RE04:
+
+    - We don't have any unit tests for these requirements as they depend on the GUI. However, we have tested them manually by building and using JabRef locally. 
 
 ## Code changes
 
@@ -102,14 +236,12 @@ We therefore created some tests that should fail before implementing functionali
 Link to main PR to JabRef: https://github.com/JabRef/jabref/pull/15250
 
 ## Test results
-### Before implementation
-#### Test report
-The initial test execution for the jabgui module was performed using 
+### Test report
+The test execution for the jabgui module was performed using
 `./gradlew :jabgui:test: --info`.
+#### Before implementation
+Out of 770 executed tests, 5 tests failed, and 9 tests were skipped. The identified failures were:
 
-Out of 770 executed tests, 5 tests failed, and 9 tests were skipped.
-
-Identified Failures:
 - `KeyBindingsTabModelTest.randomNewKeyKeyBindingInRepository()`
 - `PushToTeXworksTest.pushEntries()`
 - `GlobalSearchBarTest.recordingSearchQueriesOnFocusLostOnly(FxRobot)`
@@ -118,31 +250,43 @@ Identified Failures:
 
 The failing tests seem to be unrelated to the book cover download functionality. They are therefore not expected to interfere with the implementation of the new cover retrieval feature.
 
-Full test log is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/reports/test-before/test-log.txt).
+*Full test log before implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/test-before/test-log.txt).*
 
-#### Coverage report
+#### After implementation
+Out of 778 executed tests, 3 tests failed, and 9 tests were skipped. The identified failures were:
+
+- `KeyBindingsTabModelTest.randomNewKeyKeyBindingInRepository()`
+- `PushToTeXworksTest.pushEntries()`
+- `ThemeManagerTest.liveReloadCssDataUrl()`
+
+The number of executed tests increased from 770 to 778 due to the new test cases implemented for our book cover feature.
+
+The failed tests decreased from 5 to 3 and the remaining failures shows that the our changes didn't introduce new side effects in the `:jabgui:` module.
+
+*Full test log after implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/test-after/test-log.txt).*
+
+### Coverage report
 Even though the test execution was limited to the `jabgui` module, the coverage report includes metrics for the entire project.
 
-| Metric | Coverage % | Raw numbers   |
-| ------ | ---------- | ------------- |
-| Class  | 25,9%      | (609/2350)    |
-| Method | 15,7%      | (2675/17000)  |
-| Branch | 9,8%       | (3783/38451)  |
-| Line   | 14,1%      | (10997/77950) |
+| Metric | Coverage % (before) | Raw numbers (before) | Coverage % (after) | Raw numbers (after) |
+| ------ | ------------------- | -------------------- | ------------------ | ------------------- |
+| Class  | 25,9%               | (609/2350)           | 26%                | (611/2350)          |
+| Method | 15,7%               | (2675/17000)         | 15,9%              | (2696/17008)        |
+| Branch | 9,8%                | (3783/38451)         | 10,1%              | (3906/38863)        |
+| Line   | 14,1%               | 10997/77950)         | 14,2%              | (11080/77998)       |
 
-Full coverage report in HTML is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/coverage-before/index.html).
 
-### After implementation
-#### Test report
-#### Coverage report
+- The increased class coverage from 609 to 611 confirms that `BookCoverFetcher` and associated helper classes are integrated in the test suite. 
+- 21 additional methods were covered and implemented to satisfy our identified requirements.
+- Branch coverage increased from 9,8% to 10,1% showing that the tests verifies logic paths.
 
-## UML class diagram and its description
+*Coverage report in HTML before implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-before/index.html).*
 
-![](./diagrams/uml.drawio.svg)
-
-The diagram shows 8 classes that are involved in the resolved issue. `PreviewViewer` initiates the download process depending on the `GuiPreferences` -> `PreviewPreferences`. If it should attempt download then it uses the `BookCoverFetcher` to do so and starts this as a `BackgroundTask`, as specified in the requirements. `BookCoverFetcher` is where the majority of our changes are located. The (already existing) download logic extracts the `ISBN` from `BibEntry` to identifiy the book and download the cover. Our implementation creates a `CustomExternalFileType` `".not-available"` for missing book covers, we then check the "last modified" timestamp of that file, if it was more than 24 hours, we can attempt to download again.
+*Coverage report in HTML after implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-after/index.html).*
 
 ### Description of system (criteria 1 P+)
+
+![](./diagrams/uml.drawio.svg)
 
 #### Existing download logic
 Previously, the system would try to download a book cover every time an entry with ISBN was viewed, given that the feature was enabled. If so, it would first try to query `bookcover.longitood.com` and fall back to `covers.openlibrary.org`. However, if both fails nothing would happen, resulting in that it would attempt to download the cover again if entry was viewed again.
@@ -155,13 +299,13 @@ Our suggested updated architecture introduces a check before even attempting to 
 The new architecture can be explained by the flowchart below:
 ![Flowchart](./diagrams/diagram_after.drawio.svg)
 
+## UML class diagram and its description
+
+![](./uml.drawio.svg)
+
+The diagram shows 8 classes that are involved in the resolved issue. `PreviewViewer` initiates the download process depending on the `GuiPreferences` -> `PreviewPreferences`. If it should attempt download then it uses the `BookCoverFetcher` to do so and starts this as a `BackgroundTask`, as specified in the requirements. `BookCoverFetcher` is where the majority of our changes are located. The (already existing) download logic extracts the `ISBN` from `BibEntry` to identifiy the book and download the cover. Our implementation creates a `CustomExternalFileType` `".not-available"` for missing book covers, we then check the "last modified" timestamp of that file, if it was more than 24 hours, we can attempt to download again.
+
 ## Overall experience
-
-What are your main take-aways from this project? What did you learn?
-
-Optional (point 6): How would you put your work in context with best software engineering practice?
-
-Optional (point 7): Is there something special you want to mention here?
 
 ### Progress of the Team
 
