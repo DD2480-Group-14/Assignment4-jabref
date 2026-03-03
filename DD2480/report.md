@@ -125,13 +125,17 @@ you took care of and where you spent your time, if that time exceeds
 
 ## Overview of issue(s) and work done.
 
-Title:
+Title: Download book cover when entry editor is showing the book cover
 
-URL:
+URL: https://github.com/JabRef/jabref/issues/14848
 
-Summary in one or two sentences
+Summary in one or two sentences:
 
-Scope (functionality and code affected).
+A book cover image is only downloaded when a new entry is created. However, if the download fails, the system should try to download it again in the background after at least 24 hours since the last attempt.
+
+Scope (functionality and code affected):
+
+The functionality affected by this issue is the visual representation of a book cover in the GUI, and also the downloading functionality in the background. This mainly affects the code that manages and downloads the cover. It also affects the code that displays book covers, which must check if there is a cover to display.
 
 ## Requirements
 
