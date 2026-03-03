@@ -149,7 +149,7 @@ There doesn't seem to be any tests related to the issue. The file `jabgui/src/ma
 We therefore created some tests that should fail before implementing functionality for the requirements. The tests are written in the file `jabgui/src/test/java/org/jabref/gui/importer/BookCoverFetcherTest.java` on the main branch. Below shows what tests are related to which requirement:
 
 ### RE02 - Availability flagging
-    - `createNotAvailableFileAfterFailedDownload` - tests thata ".not-available" file is created after a failed download.
+    - `createNotAvailableFileAfterFailedDownload` - tests that a ".not-available" file is created after a failed download.
     - `getNoCoverWhenNotAvailableFileIsPresent` - checks that we don't get any cover if the ".not-available" file is present.
     - `notAvailableFileIsDeletedAfterSuccessfulDownload` - checks that the ".not-available" file is deleted when the cover is successfully downloaded.
 
