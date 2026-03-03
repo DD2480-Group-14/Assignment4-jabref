@@ -16,6 +16,13 @@ We chose a new project as we could not run the test cases properly in Assignment
 If you changed the project, how did your experience differ from before?
 The onboarding was faster as there was better documentation for https://github.com/JabRef/jabref.
 
+How was the onboarding experience?
+The project could be built by cloning the repo and following the instructions in the main project's README.md. The required tools to build the project is JabRef, Java 25 or later, and gradle 9.1 or later. However, gradle was not necessary to install since you could build using ./gradlew test.
+
+The build sometimes conclude with errors in the tests, and several tests are ignored or skipped. Otherwise, building the project with ./gradlew build -x test succeeds.
+
+One of the test, KeyBindingViewModelTest.verifyStoreSettingsWritesChanges(), had AssertionFailedError when project was run. But it has no relationship with BookCoverFetcher or PreviewViewer.
+
 ## Effort spent and contributions
 
 ### Melker Trané
