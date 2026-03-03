@@ -131,7 +131,7 @@ URL: https://github.com/JabRef/jabref/issues/14848
 
 Summary in one or two sentences:
 
-A book cover image is only downloaded when a new entry is created. However, if the download fails, the system should try to download it again in the background after at least 24 hours since the last attempt.
+Currently, a book cover image is only downloaded when a new entry is created. However, if the download fails, the system should try to download the cover again when the entry is opened and at least 24 hours have passed since the last try. This should be done as a background process in order to not affect the main program.
 
 Scope (functionality and code affected):
 
