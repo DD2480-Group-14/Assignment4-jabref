@@ -125,9 +125,6 @@ class BookCoverFetcherTest {
     /// there is not such file in the directory.
     @Test
     void getNoCoverWhenDirectoryIsEmpty() throws IOException {
-        String isbn = "9780141036144";
-        BibEntry entry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, isbn);
-
         Optional<Path> optionalPath = bookCoverFetcher.getDownloadedCoverForEntry(entry);
         assertTrue(optionalPath.isEmpty());
     }
