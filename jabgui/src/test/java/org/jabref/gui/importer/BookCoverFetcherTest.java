@@ -104,25 +104,20 @@ class BookCoverFetcherTest {
         assertTrue(Files.exists(destination));
     }
 
-    /// Test findExistingImage
+    /// Test retrieval of downloaded book cover when there is no such file in
+    /// the directory.
     ///
-    /// The function "findExistingImage" should return
-    /// an empty Optional when there is a ".not-available"
-    /// file for the requested image
+    /// We create an entry of a new book cover, but we don't create a file
+    /// that corresponds to that entry, neither a ".not-available" file.
+    /// When we try to get the book cover, we should not get anything since
+    /// there is not such file in the directory.
     @Test
-    void findExistingImageEmptyTest(@TempDir Path path) throws Exception {
-        ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class, RETURNS_DEEP_STUBS);
-        BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
-        String name = "testCover";
+    void getNoCoverWhenDirectoryIsEmpty() throws IOException {
+        String isbn = "9780141036144";
+        BibEntry entry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, isbn);
 
-        Path destination = path.resolve(name + ".not-available");
-        Files.createFile(destination);
-
-        assertTrue(Files.exists(destination));
-
-        Optional<Path> result = fetcher.findExistingImage(name, path);
-
-        assertTrue(result.isEmpty());
+        Optional<Path> optionalPath = bookCoverFetcher.getDownloadedCoverForEntry(entry);
+        assertTrue(optionalPath.isEmpty());
     }
 
     /// Tests retrieval of downloaded book cover
