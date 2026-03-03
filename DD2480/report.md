@@ -138,15 +138,22 @@ Full coverage report in HTML is included [here](https://github.com/DD2480-Group-
 
 ## UML class diagram and its description
 
-![](./uml.drawio.svg)
+![](./diagrams/uml.drawio.svg)
 
 The diagram shows 8 classes that are involved in the resolved issue. `PreviewViewer` initiates the download process depending on the `GuiPreferences` -> `PreviewPreferences`. If it should attempt download then it uses the `BookCoverFetcher` to do so and starts this as a `BackgroundTask`, as specified in the requirements. `BookCoverFetcher` is where the majority of our changes are located. The (already existing) download logic extracts the `ISBN` from `BibEntry` to identifiy the book and download the cover. Our implementation creates a `CustomExternalFileType` `".not-available"` for missing book covers, we then check the "last modified" timestamp of that file, if it was more than 24 hours, we can attempt to download again.
 
-### Key changes/classes affected
+### Description of system (criteria 1 P+)
 
-Optional (point 1): Architectural overview.
+#### Existing download logic
+Previously, the system would try to download a book cover every time an entry with ISBN was viewed, given that the feature was enabled. If so, it would first try to query `bookcover.longitood.com` and fall back to `covers.openlibrary.org`. However, if both fails nothing would happen, resulting in that it would attempt to download the cover again if entry was viewed again.
 
-Optional (point 2): relation to design pattern(s).
+The previous architecture can be explained by the flowchart below (as described [here](https://github.com/JabRef/jabref/pull/14777)):
+![Flowchart](./diagrams/diagram_before.drawio.svg)
+#### Download logic after our changes
+Our suggested updated architecture introduces a check before even attempting to download, it checks if any previous attempts has been made, if they have been it made it checks if 24 hours or more has passed since any previous attempt of download, then and only then, it attempts to download. Another change in the architecture is that after a download attempt has failed we flag the cover as not available by creating a file for the cover with the .not-availabe file extension.
+
+The new architecture can be explained by the flowchart below:
+![Flowchart](./diagrams/diagram_after.drawio.svg)
 
 ## Overall experience
 
