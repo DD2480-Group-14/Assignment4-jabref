@@ -19,7 +19,7 @@ JabRef is designed to streamline the academic workflow by being a management too
 ### High-Level Architecture of JabRef (P+ criteria 1)
 - At the center of JabRef we have the `model` which contains the most important stuff. It contains the main database and entries.
 - Then we have the `logic` package which is responsible for manipulating the `model`.
-- Interfaces. There is both and GUI and CLI. The GUI is the main way to use JabRef and is built using JavaFX. The Interfaces can use the `Locig` package to modify the `model`.
+- Interfaces. There is both and GUI and CLI. The GUI is the main way to use JabRef and is built using JavaFX. The Interfaces can use the `logic` package to modify the `model`.
 - Since a lot of other packages need to update when something occurs in the `model`, we need a way to update other parts of the system. JabRef uses a layered architecture which means that `model` should not depend on any other packages. JabRef solves this issue by using an event bus: when the `model` changes, events are triggered which the other packages can see and respond to.
 
 Below is a diagram showing the main architecture. Red arrows show which dependencies are allowed. Green arrows shows how information travels via the event bus.
