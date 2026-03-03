@@ -42,7 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.when;
 
-public class BookCoverFetcherTest {
+class BookCoverFetcherTest {
     private final ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
     private BookCoverFetcher bookCoverFetcher;
     private MockedStatic<Directories> mockedDirectories;
@@ -69,7 +69,7 @@ public class BookCoverFetcherTest {
     /// a book cover again if timeSincePrevious returns
     /// a time in hours < 24
     @Test
-    public void checkBookCoverFetchCooldown() {
+    void checkBookCoverFetchCooldown() {
         ISBN isbn = new ISBN("123");
 
         doReturn(Optional.empty()).when(bookCoverFetcher).findExistingImage(any(), any());
@@ -90,7 +90,7 @@ public class BookCoverFetcherTest {
     /// "toFile". This should then cause the expected file to
     /// be created.
     @Test
-    public void flagAsAvailableTest() throws Exception {
+    void flagAsAvailableTest() throws Exception {
         String name = "testCover";
         String urlString = "https://example.com/thisisabookcoverthatdoesntexist.jpg";
 
