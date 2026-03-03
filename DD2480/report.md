@@ -47,6 +47,30 @@ During this assignment, Melker made the following contributions:
 2. Created the logic for creating and updating .not-available files
 3. Wrote a few tests
 4. Reviewed around 50% of other team members PRs
+### Clarabelle
+Following is a list of how Clarabelle spent his time:
+
+1. plenary discussions/meetings (2 hours);
+
+2. discussions within parts of the group (2 hours);
+
+3. reading documentation (2 hours);
+
+4. configuration and setup (4 hours);
+I had to download jabref, IntelliJ IDEA. My laptop took a while to download the apps as it crashed multiple times.
+
+5. analyzing code/output (3 hours);
+The initial tests cases ran for 30 minutes each time.
+
+6. writing documentation (4 hours)
+
+7. writing code (0 hours);
+
+8. running code (3 hours)?
+
+During this assignment, Clarabelle made the following contributions:
+1. Wrote the onboarding document
+2. Checked how many initial tests failures
 
 For each team member, how much time was spent in
 
