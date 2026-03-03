@@ -150,7 +150,7 @@ Previously, the system would try to download a book cover every time an entry wi
 The previous architecture can be explained by the flowchart below (as described [here](https://github.com/JabRef/jabref/pull/14777)):
 ![Flowchart](./diagrams/diagram_before.drawio.svg)
 #### Download logic after our changes
-Our suggested updated architecture introduces a check before even attempting to download, it checks if any previous attempts has been made, if they have been it made it checks if 24 hours or more has passed since any previous attempt of download, then and only then, it attempts to download. Another change in the architecture is that after a download attempt has failed we flag the cover as not available by creating a file for the cover with the .not-availabe file extension.
+Our suggested updated architecture introduces a check before even attempting to download, it checks if any previous attempts has been made. If there is any previous attempt, it check whether the last attempt was made more than 24 hours ago, then it attempts to download. If there is no previous attempt, it will also try to download. Another change in the architecture is that after a download attempt has failed we flag the cover as not available by creating a file for the cover with the .not-availabe file extension. 
 
 The new architecture can be explained by the flowchart below:
 ![Flowchart](./diagrams/diagram_after.drawio.svg)
