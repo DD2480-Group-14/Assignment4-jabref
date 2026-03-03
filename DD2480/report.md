@@ -6,7 +6,22 @@
 
 **URL:** https://github.com/JabRef/jabref
 
-JabRef is a free open source reference management tool, specifically used for BibTeX and LaTeX format. It helps users collect, organize and search for bibliographic data. 
+JabRef is a free open source reference management tool, specifically used for BibTeX and LaTeX format. It helps users collect, organize and search for bibliographic data.
+
+### JabRef purpose (P+ criteria 1)
+
+JabRef is designed to streamline the academic workflow by being a management tool for references. Some of the core features of JabRef are: 
+
+- Automatic retrieval of bibliographic data from online sources such as arXiv or CrossRef. Automatic retrieval can be done by using unique identifiers like DOIs or ISBNs.
+- Organize entries by using _collections_. Collections allow users to group entries based on for example keywords. This allows users to more easily find what they are looking for.
+- **Citing.** JabRef allows users to conveniently cite entries as they write. JabRef supports many common writing tools as LaTeX, Word, LibreOffice, and many more.
+
+### High-Level Architecture of JabRef (P+ criteria 1)
+- At the center of JabRef we have the `model` which contains the most important stuff. It contains the main database and entries.
+- Then we have the `logic` package which is responsible for manipulating the `model`.
+- Interfaces. There is both and GUI and CLI. The GUI is the main way to use JabRef and is built using JavaFX. The Interfaces can use the `Locig` package to modify the `model`.
+- Since a lot of other packages need to update when something occurs in the `model`, we need a way to update other parts of the system. JabRef uses a layered architecture which means that `model` should not depend on any other packages. JabRef solves this issue by using an event bus: when the `model` changes, events are triggered which the other packages can see and respond to.
+
 
 ## Onboarding experience
 
