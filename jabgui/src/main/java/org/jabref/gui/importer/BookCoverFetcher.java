@@ -73,7 +73,7 @@ public class BookCoverFetcher {
 
     protected Optional<Duration> timeSincePreviousAttempt(String name, Path directory) {
         Optional<Path> notAvailablePathOptional = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
-        if (notAvailablePathOptional == null || notAvailablePathOptional.isEmpty()) {
+        if (notAvailablePathOptional.isEmpty()) {
             LOGGER.warn("Could not find not available file path for: {}", name);
             return Optional.empty();
         }
@@ -117,7 +117,7 @@ public class BookCoverFetcher {
                 .orElse(StandardExternalFileType.JPG);
 
         Optional<Path> destinationOptional = resolveNameWithType(directory, name, inferredFileType);
-        if (destinationOptional == null || destinationOptional.isEmpty()) {
+        if (destinationOptional.isEmpty()) {
             LOGGER.warn("Skipping cover download: Could not resolve valid path for name {}", name);
             return;
         }
@@ -144,7 +144,7 @@ public class BookCoverFetcher {
 
     private void flagAsNotAvailable(final String name, final Path directory) {
         Optional<Path> destinationOptional = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
-        if (destinationOptional == null || destinationOptional.isEmpty()) {
+        if (destinationOptional.isEmpty()) {
             LOGGER.warn("Skipping flagging as not available: Could not resolve valid path for name {}", name);
             return;
         }
@@ -167,7 +167,7 @@ public class BookCoverFetcher {
 
     private void deleteNotAvailableFileIfExists(final String name, final Path directory) {
         Optional<Path> destinationOptional = resolveNameWithType(directory, name, NOT_AVAILABLE_FILE_TYPE);
-        if (destinationOptional == null || destinationOptional.isEmpty()) {
+        if (destinationOptional.isEmpty()) {
             return;
         }
         Path destination = destinationOptional.get();
