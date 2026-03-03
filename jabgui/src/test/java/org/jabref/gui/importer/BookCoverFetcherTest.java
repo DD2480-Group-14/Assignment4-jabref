@@ -39,11 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-<<<<<<< 13-add-unit-test-for-findexistingimage-function
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
-class BookCoverFetcherTest {
-=======
 import static org.mockito.Mockito.when;
 
 public class BookCoverFetcherTest {
@@ -66,7 +62,6 @@ public class BookCoverFetcherTest {
     void tearDown() {
         mockedDirectories.close();
     }
->>>>>>> main
 
     /// Test the cooldown for trying to download a bookcover
     ///
@@ -74,14 +69,7 @@ public class BookCoverFetcherTest {
     /// a book cover again if timeSincePrevious returns
     /// a time in hours < 24
     @Test
-<<<<<<< 13-add-unit-test-for-findexistingimage-function
-    void checkBookCoverFetchCooldown(@TempDir Path path) {
-        ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
-        BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
-
-=======
     public void checkBookCoverFetchCooldown() {
->>>>>>> main
         ISBN isbn = new ISBN("123");
 
         doReturn(Optional.empty()).when(bookCoverFetcher).findExistingImage(any(), any());
@@ -102,13 +90,7 @@ public class BookCoverFetcherTest {
     /// "toFile". This should then cause the expected file to
     /// be created.
     @Test
-<<<<<<< 13-add-unit-test-for-findexistingimage-function
-    void flagAsAvailableTest(@TempDir Path path) throws Exception {
-        ExternalApplicationsPreferences preferences = mock(ExternalApplicationsPreferences.class);
-        BookCoverFetcher fetcher = spy(new BookCoverFetcher(preferences));
-=======
     public void flagAsAvailableTest() throws Exception {
->>>>>>> main
         String name = "testCover";
         String urlString = "https://example.com/thisisabookcoverthatdoesntexist.jpg";
 
@@ -122,7 +104,6 @@ public class BookCoverFetcherTest {
         assertTrue(Files.exists(destination));
     }
 
-<<<<<<< 13-add-unit-test-for-findexistingimage-function
     /// Test findExistingImage
     ///
     /// The function "findExistingImage" should return
@@ -142,7 +123,8 @@ public class BookCoverFetcherTest {
         Optional<Path> result = fetcher.findExistingImage(name, path);
 
         assertTrue(result.isEmpty());
-=======
+    }
+
     /// Tests retrieval of downloaded book cover
     ///
     /// We create a new book cover in the cover directory.
@@ -176,6 +158,5 @@ public class BookCoverFetcherTest {
 
         Optional<Path> optionalPath = bookCoverFetcher.getDownloadedCoverForEntry(entry);
         assertTrue(optionalPath.isEmpty());
->>>>>>> main
     }
 }
