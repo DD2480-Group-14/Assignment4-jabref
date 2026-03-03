@@ -206,14 +206,12 @@ Below shows what tests are related to which requirement:
 Link to main PR to JabRef: https://github.com/JabRef/jabref/pull/15250
 
 ## Test results
-### Before implementation
-#### Test report
-The initial test execution for the jabgui module was performed using 
+### Test report
+The test execution for the jabgui module was performed using
 `./gradlew :jabgui:test: --info`.
+#### Before implementation
+Out of 770 executed tests, 5 tests failed, and 9 tests were skipped. The identified failures were:
 
-Out of 770 executed tests, 5 tests failed, and 9 tests were skipped.
-
-Identified Failures:
 - `KeyBindingsTabModelTest.randomNewKeyKeyBindingInRepository()`
 - `PushToTeXworksTest.pushEntries()`
 - `GlobalSearchBarTest.recordingSearchQueriesOnFocusLostOnly(FxRobot)`
@@ -222,23 +220,38 @@ Identified Failures:
 
 The failing tests seem to be unrelated to the book cover download functionality. They are therefore not expected to interfere with the implementation of the new cover retrieval feature.
 
-Full test log is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/reports/test-before/test-log.txt).
+*Full test log before implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/test-before/test-log.txt).*
 
-#### Coverage report
+#### After implementation
+Out of 778 executed tests, 3 tests failed, and 9 tests were skipped. The identified failures were:
+
+- `KeyBindingsTabModelTest.randomNewKeyKeyBindingInRepository()`
+- `PushToTeXworksTest.pushEntries()`
+- `ThemeManagerTest.liveReloadCssDataUrl()`
+
+The number of executed tests increased from 770 to 778 due to the new test cases implemented for our book cover feature.
+
+The failed tests decreased from 5 to 3 and the remaining failures shows that the our changes didn't introduce new side effects in the `:jabgui:` module.
+
+*Full test log after implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/test-after/test-log.txt).*
+
+### Coverage report
 Even though the test execution was limited to the `jabgui` module, the coverage report includes metrics for the entire project.
 
-| Metric | Coverage % | Raw numbers   |
-| ------ | ---------- | ------------- |
-| Class  | 25,9%      | (609/2350)    |
-| Method | 15,7%      | (2675/17000)  |
-| Branch | 9,8%       | (3783/38451)  |
-| Line   | 14,1%      | (10997/77950) |
+| Metric | Coverage % (before) | Raw numbers (before) | Coverage % (after) | Raw numbers (after) |
+| ------ | ------------------- | -------------------- | ------------------ | ------------------- |
+| Class  | 25,9%               | (609/2350)           | 26%                | (611/2350)          |
+| Method | 15,7%               | (2675/17000)         | 15,9%              | (2696/17008)        |
+| Branch | 9,8%                | (3783/38451)         | 10,1%              | (3906/38863)        |
+| Line   | 14,1%               | 10997/77950)         | 14,2%              | (11080/77998)       |
 
-Full coverage report in HTML is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/tree/report/DD2480/coverage-before/index.html).
+- The increased class coverage from 609 to 611 confirms that `BookCoverFetcher` and associated helper classes are integrated in the test suite. 
+- 21 additional methods were covered and implemented to satisfy our identified requirements.
+- Branch coverage increased from 9,8% to 10,1% showing that the tests verifies logic paths.
 
-### After implementation
-#### Test report
-#### Coverage report
+*Coverage report in HTML before implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-before/index.html).*
+
+*Coverage report in HTML after implementation is included [here](https://github.com/DD2480-Group-14/Assignment4-jabref/blob/report/DD2480/reports/coverage-after/index.html).*
 
 ## UML class diagram and its description
 
