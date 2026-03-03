@@ -11,8 +11,10 @@ JabRef is a free open source reference management tool, specifically used for Bi
 ## Onboarding experience
 
 Did you choose a new project or continue on the previous one?
+We chose a new project as we could not run the test cases properly in Assignment 3.
 
 If you changed the project, how did your experience differ from before?
+The onboarding was faster as there was better documentation for https://github.com/JabRef/jabref.
 
 ## Effort spent and contributions
 
