@@ -124,6 +124,12 @@ Optional (point 6): How would you put your work in context with best software en
 
 Optional (point 7): Is there something special you want to mention here?
 
-### Essence
+### Progress of the Team
 
 We would argue that we are now in the `performing` stage where we work effectively and efficiently, if we had more time we could probably become even more efficient. We can also see that with this assignment we are moving into the `adjourned` stage since this our final assignment.
+
+### Way of Working
+
+According to the checklist of "Way-of-Working" we assess our team to be in the `In Place` state. The selected practices and tools were being actively used by the whole team, supporting the collaboration, quality and efficiency of our work. We've gotten a deeper understanding of each other's communication styles and work preferences throughout the assignments, which has continuously strengthen our teamwork.
+
+We don't claim to have reached the `Working Well` state since our workflow was consciously adapted to the specific requirements of each assignment.
