@@ -14,7 +14,39 @@ Did you choose a new project or continue on the previous one?
 
 If you changed the project, how did your experience differ from before?
 
-## Effort spent
+## Effort spent and contributions
+
+### Melker Trané
+
+Following is a list of how Melker spent his time:
+
+1. plenary discussions/meetings (2 hours)
+
+    Other tasks were sometimes done at the same time
+
+2. discussions within parts of the group (1 hour)
+
+3. reading documentation (2 hour)
+
+4. configuration and setup (2 hours);
+
+    The only tool that I did not already have was IntelliJ IDEA. Setting up IntelliJ took around 1.5 hours. The remaining 0.5 hours was spent on other stullf, like creating a fork and setting up github.
+
+5. analyzing code/output (6 hours);
+
+6. writing documentation (2 hours);
+
+7. writing code (6 hours);
+
+8. running code (2 hours)?
+    
+    This includes time running tests, and running the GUI with our code to see if it works.
+
+During this assignment, Melker made the following contributions:
+1. Made the GUI to initiate a download when an entry is opened, and refresh the GUI if successful.
+2. Created the logic for creating and updating .not-available files
+3. Wrote a few tests
+4. Reviewed around 50% of other team members PRs
 
 For each team member, how much time was spent in
 
