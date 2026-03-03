@@ -103,25 +103,31 @@ Statement of contribution (Vidar):
 
 For each team member, how much time was spent in
 
-1. plenary discussions/meetings;
+### Maria Pettersson
+#### Time spent
+1. _Plenary discussions/meetings_; 2 hours.
 
-2. discussions within parts of the group;
+2. _Discussions within parts of the group_; 1 hour.
 
-3. reading documentation;
+3. _Reading documentation_; 2 hours.
 
-4. configuration and setup;
+4. _Configuration and setup_; 3 hours.
 
-5. analyzing code/output;
+    Setting up IntelliJ with the guidelines from JabRef's documentation took between 1- 2 hours. I ran into some issues when cloning the repo and building the project, resulting in having to redo the set up process.
 
-6. writing documentation;
+5. _Analyzing code/output_; 3 hours.
 
-7. writing code;
+6. _Writing documentation_; 5 hours.
 
-8. running code?
+7. _Writing code_; 0 hours.
 
-For setting up tools and libraries (step 4), enumerate all dependencies
-you took care of and where you spent your time, if that time exceeds
-30 minutes.
+8. _Running code_; 2 hours.
+
+#### Contribution
+
+- Identified and documented requirements RE01-RE04 for our chosen issue.
+- Documented our Way of Working and Project Description.
+- Executed and documented the regression tests and coverage before and after implementation of our feature.
 
 ## Overview of issue(s) and work done.
 
