@@ -8,7 +8,11 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.TreeSet;
 
+import javafx.collections.FXCollections;
+
+import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.util.Directories;
@@ -26,6 +30,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class BookCoverFetcherTest {
     private final ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
@@ -50,6 +55,8 @@ class BookCoverFetcherTest {
         notAvailablePath = Directories.getCoverDirectory().resolve("isbn-" + isbn + ".not-available");
         badCoverPath = Directories.getCoverDirectory().resolve("isbn-" + badIsbn + ".jpg");
         badNotAvailablePath = Directories.getCoverDirectory().resolve("isbn-" + badIsbn + ".not-available");
+
+        when(externalApplicationsPreferences.getExternalFileTypes()).thenReturn(FXCollections.observableSet(new TreeSet<>(ExternalFileTypes.getDefaultExternalFileTypes())));
     }
 
     @AfterEach
