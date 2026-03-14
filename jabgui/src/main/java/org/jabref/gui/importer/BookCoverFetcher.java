@@ -131,7 +131,6 @@ public class BookCoverFetcher {
             flagAsNotAvailable(name, directory);
         } catch (FetcherException e) {
             LOGGER.error("Error while downloading or saving cover image file", e);
-            flagAsNotAvailable(name, directory);
         }
     }
 
