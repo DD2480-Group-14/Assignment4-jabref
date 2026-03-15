@@ -146,7 +146,7 @@ class BookCoverFetcherTest {
     /// We create a new .not-available file in the cover directory with a modification time less than 24 hours ago
     /// When we try to download the book, the modification time should not change.
     @Test
-    void modificationTimeDoesNotChangesWhenLessThan24Hours() throws IOException, FetcherException {
+    void modificationTimeDoesNotChangeWhenLessThan24Hours() throws IOException, FetcherException {
         Files.createFile(badNotAvailablePath);
         // Set the last modification time of the file to be 23 hours ago
         Files.setLastModifiedTime(badNotAvailablePath, FileTime.from(Instant.now().minus(23, ChronoUnit.HOURS)));
