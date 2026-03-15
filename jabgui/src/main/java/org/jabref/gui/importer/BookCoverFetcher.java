@@ -39,7 +39,7 @@ public class BookCoverFetcher {
 
     private static final String URL_FETCHER_URL = "https://bookcover.longitood.com/bookcover/";
     private static final String IMAGE_FALLBACK_URL = "https://covers.openlibrary.org/b/isbn/";
-    private static final String IMAGE_FALLBACK_SUFFIX = "-L.jpg";
+    private static final String IMAGE_FALLBACK_SUFFIX = "-L.jpg?default=false";
     private static final Integer IMAGE_DOWNLOAD_COOLDOWN_HOURS = 24;
 
     private static final CustomExternalFileType NOT_AVAILABLE_FILE_TYPE = new CustomExternalFileType("", "not-available", "", "", "", IconTheme.JabRefIcons.FILE);
@@ -102,7 +102,7 @@ public class BookCoverFetcher {
 
         URLDownload download;
         try {
-            download = getURLDownload(url);
+            download = new URLDownload(url);
         } catch (MalformedURLException e) {
             LOGGER.error("Error while downloading cover image file", e);
             return;
@@ -132,10 +132,6 @@ public class BookCoverFetcher {
         } catch (FetcherException e) {
             LOGGER.error("Error while downloading or saving cover image file", e);
         }
-    }
-
-    protected URLDownload getURLDownload(String url) throws MalformedURLException {
-        return new URLDownload(url);
     }
 
     private void flagAsNotAvailable(final String name, final Path directory) {
@@ -195,7 +191,7 @@ public class BookCoverFetcher {
             try {
                 LOGGER.info("Downloading book cover url from {}", url);
 
-                URLDownload download = getURLDownload(url);
+                URLDownload download = new URLDownload(url);
                 String json = download.asString();
                 Matcher matches = URL_JSON_PATTERN.matcher(json);
 

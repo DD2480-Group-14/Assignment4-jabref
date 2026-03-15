@@ -2,7 +2,6 @@ package org.jabref.gui.importer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -15,14 +14,11 @@ import javafx.collections.FXCollections;
 
 import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
-import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.util.Directories;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.http.SimpleHttpResponse;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,24 +29,23 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class BookCoverFetcherTest {
     private final ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
-    private BookCoverFetcher bookCoverFetcher;
+    private final BookCoverFetcher bookCoverFetcher = new BookCoverFetcher(externalApplicationsPreferences);
     private MockedStatic<Directories> mockedDirectories;
-    private URLDownload mockDownload;
+    // A valid isbn that has a downloadable cover
     private final String isbn = "9780141036144";
     private final BibEntry entry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, isbn);
     private Path coverPath;
     private Path notAvailablePath;
+    // A valid isbn that does not have a downloadable cover
+    private final String badIsbn = "1234567881";
+    private final BibEntry badEntry = new BibEntry(StandardEntryType.Book).withField(StandardField.ISBN, badIsbn);
+    private Path badCoverPath;
+    private Path badNotAvailablePath;
 
     @BeforeEach
     void setUp(@TempDir Path temporaryFolder) throws MalformedURLException {
@@ -58,35 +53,15 @@ class BookCoverFetcherTest {
         mockedDirectories.when(Directories::getCoverDirectory).thenReturn(temporaryFolder);
         coverPath = Directories.getCoverDirectory().resolve("isbn-" + isbn + ".jpg");
         notAvailablePath = Directories.getCoverDirectory().resolve("isbn-" + isbn + ".not-available");
+        badCoverPath = Directories.getCoverDirectory().resolve("isbn-" + badIsbn + ".jpg");
+        badNotAvailablePath = Directories.getCoverDirectory().resolve("isbn-" + badIsbn + ".not-available");
 
         when(externalApplicationsPreferences.getExternalFileTypes()).thenReturn(FXCollections.observableSet(new TreeSet<>(ExternalFileTypes.getDefaultExternalFileTypes())));
-
-        bookCoverFetcher = spy(new BookCoverFetcher(externalApplicationsPreferences));
-        mockDownload = mock(URLDownload.class);
-        doReturn(mockDownload).when(bookCoverFetcher).getURLDownload(Mockito.anyString());
     }
 
     @AfterEach
     void tearDown() {
         mockedDirectories.close();
-    }
-
-    /// Test the cooldown for trying to download a book cover
-    ///
-    /// Asserts that the system does not try to download
-    /// a book cover again if it just attempted to do so
-    @Test
-    void checkBookCoverFetchCooldown() throws Exception {
-        doThrow(new FetcherClientException(mock(URL.class), mock(SimpleHttpResponse.class))).when(mockDownload).toFile(any());
-        when(mockDownload.asString()).thenReturn("mocked string");
-
-        // We should make a real download attempt, indicated by toFile being called once.
-        bookCoverFetcher.downloadCoversForEntry(entry);
-        verify(mockDownload, times(1)).toFile(any());
-
-        // We should not make a download attempt, indicated by toFile still only being called once in total.
-        bookCoverFetcher.downloadCoversForEntry(entry);
-        verify(mockDownload, times(1)).toFile(any());
     }
 
     /// Test creation of a not-available file
@@ -99,12 +74,10 @@ class BookCoverFetcherTest {
     /// be created.
     @Test
     void createNotAvailableFileAfterFailedDownload() throws Exception {
-        doThrow(new FetcherClientException(mock(URL.class), mock(SimpleHttpResponse.class))).when(mockDownload).toFile(any());
-        when(mockDownload.asString()).thenReturn("mocked string");
+        bookCoverFetcher.downloadCoversForEntry(badEntry);
 
-        bookCoverFetcher.downloadCoversForEntry(entry);
-
-        assertTrue(Files.exists(notAvailablePath));
+        assertTrue(Files.notExists(badCoverPath));
+        assertTrue(Files.exists(badNotAvailablePath));
     }
 
     /// Test retrieval of downloaded book cover when there is no such file in
@@ -155,16 +128,15 @@ class BookCoverFetcherTest {
     @Test
     void modificationTimeChangesWhenMoreThan24Hours() throws IOException, FetcherException {
         Instant now = Instant.now();
-        Files.createFile(notAvailablePath);
+        Files.createFile(badNotAvailablePath);
         // Set the last modification time of the file to be 25 hours ago
-        Files.setLastModifiedTime(notAvailablePath, FileTime.from(now.minus(25, ChronoUnit.HOURS)));
+        Files.setLastModifiedTime(badNotAvailablePath, FileTime.from(now.minus(25, ChronoUnit.HOURS)));
 
-        doThrow(new FetcherClientException(mock(URL.class), mock(SimpleHttpResponse.class))).when(mockDownload).toFile(any());
-        when(mockDownload.asString()).thenReturn("mocked string");
+        bookCoverFetcher.downloadCoversForEntry(badEntry);
 
-        bookCoverFetcher.downloadCoversForEntry(entry);
-
-        Instant fileTimeAfterAttempt = Files.getLastModifiedTime(notAvailablePath).toInstant();
+        assertTrue(Files.notExists(badCoverPath));
+        assertTrue(Files.exists(badNotAvailablePath));
+        Instant fileTimeAfterAttempt = Files.getLastModifiedTime(badNotAvailablePath).toInstant();
         // We pad with a few second since the file system might not be precise
         assertTrue(now.minusSeconds(10).isBefore(fileTimeAfterAttempt));
     }
@@ -174,18 +146,16 @@ class BookCoverFetcherTest {
     /// We create a new .not-available file in the cover directory with a modification time less than 24 hours ago
     /// When we try to download the book, the modification time should not change.
     @Test
-    void modificationTimeDoesNotChangesWhenLessThan24Hours() throws IOException, FetcherException {
-        Files.createFile(notAvailablePath);
+    void modificationTimeDoesNotChangeWhenLessThan24Hours() throws IOException, FetcherException {
+        Files.createFile(badNotAvailablePath);
         // Set the last modification time of the file to be 23 hours ago
-        Files.setLastModifiedTime(notAvailablePath, FileTime.from(Instant.now().minus(23, ChronoUnit.HOURS)));
-        Instant fileTimeBeforeAttempt = Files.getLastModifiedTime(notAvailablePath).toInstant();
+        Files.setLastModifiedTime(badNotAvailablePath, FileTime.from(Instant.now().minus(23, ChronoUnit.HOURS)));
+        Instant fileTimeBeforeAttempt = Files.getLastModifiedTime(badNotAvailablePath).toInstant();
 
-        doThrow(new FetcherClientException(mock(URL.class), mock(SimpleHttpResponse.class))).when(mockDownload).toFile(any());
-        when(mockDownload.asString()).thenReturn("mocked string");
+        bookCoverFetcher.downloadCoversForEntry(badEntry);
 
-        bookCoverFetcher.downloadCoversForEntry(entry);
-
-        Instant fileTimeAfterAttempt = Files.getLastModifiedTime(notAvailablePath).toInstant();
+        assertTrue(Files.notExists(badCoverPath));
+        Instant fileTimeAfterAttempt = Files.getLastModifiedTime(badNotAvailablePath).toInstant();
         assertEquals(fileTimeAfterAttempt, fileTimeBeforeAttempt);
     }
 
@@ -198,10 +168,9 @@ class BookCoverFetcherTest {
         Files.createFile(notAvailablePath);
         Files.setLastModifiedTime(notAvailablePath, FileTime.from(Instant.now().minus(25, ChronoUnit.HOURS)));
 
-        when(mockDownload.asString()).thenReturn("mocked string");
-
         bookCoverFetcher.downloadCoversForEntry(entry);
 
+        assertTrue(Files.exists(coverPath));
         assertTrue(Files.notExists(notAvailablePath));
     }
 }
